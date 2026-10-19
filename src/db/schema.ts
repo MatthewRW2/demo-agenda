@@ -30,6 +30,8 @@ export const bookings = pgTable(
     manageToken: text("manage_token").notNull().unique(),
     source: origenReserva("source").notNull().default("web"),
     notes: text("notes"),
+    /** Hash (con sal) de la IP de quien reservó por la web; sirve para el límite de reservas. */
+    customerIpHash: text("customer_ip_hash"),
     /** Se llena cuando el negocio envía el recordatorio por WhatsApp (Fase 7). */
     reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -38,6 +40,7 @@ export const bookings = pgTable(
     check("bookings_rango_valido", sql`${t.endsAt} > ${t.startsAt}`),
     index("bookings_tenant_inicio_idx").on(t.tenantSlug, t.startsAt),
     index("bookings_tenant_telefono_idx").on(t.tenantSlug, t.customerPhone),
+    index("bookings_ip_creada_idx").on(t.customerIpHash, t.createdAt),
   ],
 );
 

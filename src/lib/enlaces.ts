@@ -28,3 +28,30 @@ export function urlBase(env: Record<string, string | undefined> = process.env): 
   if (vercel) return `https://${vercel}`;
   return "http://localhost:3000";
 }
+
+function aFormatoCalendario(instante: Date): string {
+  return instante
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "");
+}
+
+export interface DatosCalendario {
+  titulo: string;
+  inicio: Date;
+  fin: Date;
+  detalles?: string;
+  lugar?: string;
+}
+
+/** Enlace "Agregar a Google Calendar" (plantilla de evento, fechas en UTC). */
+export function enlaceGoogleCalendar({ titulo, inicio, fin, detalles, lugar }: DatosCalendario) {
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: titulo,
+    dates: `${aFormatoCalendario(inicio)}/${aFormatoCalendario(fin)}`,
+  });
+  if (detalles) params.set("details", detalles);
+  if (lugar) params.set("location", lugar);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}

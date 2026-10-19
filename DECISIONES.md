@@ -126,3 +126,47 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   buenas prácticas 96, SEO 100. LCP 2,3 s, CLS 0. Lo único que baja buenas prácticas es el 404 de
   `/<slug>/reservar`, que se crea en la Fase 5. Sin desbordes horizontales en 320–412 px.
 - El botón "Reservar" ya enlaza a `/<slug>/reservar`; esa pantalla llega en la Fase 5.
+
+## Fase 5
+
+- **Server Actions** (`/[slug]/reservar/acciones.ts`) para consultar horas y reservar. Son endpoints
+  públicos: todo se valida con Zod en el servidor y el slug se resuelve contra los tenants.
+- **El servidor nunca confía en el cliente**: al reservar vuelve a calcular los horarios libres y usa
+  el profesional que resulte (con "cualquiera", el menos ocupado). Si la hora ya no está libre, responde
+  "Ese horario se acaba de ocupar, elige otro." y la pantalla vuelve a las horas, ya actualizadas.
+- **Carreras**: si la restricción de la base rechaza el insert (otra persona se adelantó), se recalcula
+  y se reintenta hasta 3 veces (con "cualquiera" puede haber otro profesional libre). Un error que no sea
+  de traslape se propaga y se registra; al cliente le sale un mensaje genérico.
+- **Lógica con la base inyectada** (`servicio.ts` + `RepoReservas`): se prueba con una base en memoria
+  (simula carreras y fallos) y contra PGlite con la restricción real. La implementación Drizzle es
+  `repositorio.ts` y sirve igual para Neon y PGlite.
+- **Límites de protección**: citas confirmadas y futuras por celular y negocio (3; 10 en modo demo) y
+  reservas por IP en una hora (10; 30 en modo demo). Los límites del modo demo son más holgados porque el
+  prospecto prueba varias veces. Sin IP conocida (desarrollo local) no se aplica el límite por IP.
+- **La IP se guarda solo como hash con sal** (`customer_ip_hash`, migración `0002_ip_hash`); la sal sale
+  de `CRON_SECRET` o `ADMIN_PASSWORD`. Vercel entrega la IP en `x-forwarded-for`.
+- **Celular colombiano**: 10 dígitos que empiezan por 3. Acepta espacios, guiones, `+57`, `57` y `0057`
+  y guarda solo los 10 dígitos. Fijos no se aceptan (el recordatorio va por WhatsApp).
+- **Mismas reglas en el navegador y en el servidor** (el esquema Zod es compartido): el error aparece al
+  instante junto al campo y el servidor lo vuelve a comprobar.
+- **Confirmación = página `/<slug>/cita/<token>`** (con `?nueva=1` muestra el "¡Listo!"). Es la misma
+  URL que va por correo y que la Fase 6 ampliará con cancelar y reprogramar. Lleva `noindex` y
+  `no-referrer` porque el token es secreto (32 bytes aleatorios, 43 caracteres).
+- **Código de reserva** = 6 primeros caracteres del id, en mayúsculas (solo para mostrar y buscar; el
+  acceso lo da el token).
+- **Correo con Resend por HTTP** (`fetch`, sin SDK) y enviado con `after()`: si no hay
+  `RESEND_API_KEY` se omite; si Resend falla, solo se registra. Remitente por defecto
+  `onboarding@resend.dev`, que **solo entrega al dueño de la cuenta de Resend**; para escribirle a
+  clientes hay que verificar un dominio y poner `RESEND_FROM`.
+- **Pasos**: servicio → profesional → día y hora (en una sola pantalla) → datos. Al elegir la hora se
+  avanza solo. El foco pasa al título en cada paso y hay barra de progreso accesible.
+- **`/reservar` lleva `noindex`** (por eso su SEO en Lighthouse es 60, a propósito).
+- **Playwright** (`npm run test:e2e`) usa el Chrome instalado en emulación de Pixel 7 y la base real
+  (Neon). Todo lo que crea lleva el nombre "E2E ..." y se borra antes y después. Reserva el último día
+  del carrusel para no chocar con los datos de la demo. Además de las dos pruebas pedidas hay una de
+  carrera entre dos clientes, una de validación y una de enlace inválido.
+- **Verificado con mutaciones**: si el servidor ignora las reservas existentes, fallan las pruebas del
+  horario ocupado (e2e); si se quita el reintento, el manejo de errores o el recálculo, fallan las
+  unitarias.
+- **Medición** (Lighthouse móvil): `/<slug>` 98 / 100 / 100 / 100 (rendimiento, accesibilidad, buenas
+  prácticas, SEO); `/<slug>/reservar` 98 / 100 / 100 / 60 (noindex).

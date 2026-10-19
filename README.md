@@ -29,19 +29,20 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Comando                                      | Qué hace                                            |
-| -------------------------------------------- | --------------------------------------------------- |
-| `npm run dev`                                | Servidor de desarrollo                              |
-| `npm run build`                              | Compilación de producción                           |
-| `npm run lint`                               | ESLint                                              |
-| `npm run typecheck`                          | TypeScript sin emitir                               |
-| `npm test`                                   | Pruebas unitarias (Vitest)                          |
-| `npm run format`                             | Formatea con Prettier                               |
-| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla            |
-| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts` |
-| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`             |
-| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape      |
-| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                 |
+| Comando                                      | Qué hace                                                    |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                                      |
+| `npm run build`                              | Compilación de producción                                   |
+| `npm run lint`                               | ESLint                                                      |
+| `npm run typecheck`                          | TypeScript sin emitir                                       |
+| `npm test`                                   | Pruebas unitarias (Vitest)                                  |
+| `npm run format`                             | Formatea con Prettier                                       |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                    |
+| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`         |
+| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                     |
+| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape              |
+| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real) |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                         |
 
 ## Negocios (tenants)
 
@@ -66,5 +67,14 @@ Postgres en [Neon](https://neon.tech) (plan gratuito) con Drizzle ORM. Define `D
 Las dobles reservas se evitan **en la base de datos**: la restricción `bookings_sin_traslape`
 (`EXCLUDE USING gist`, extensión `btree_gist`) rechaza dos reservas activas solapadas del mismo
 profesional. `npm test` la verifica contra un Postgres embebido, sin necesidad de Neon.
+
+## Reservas
+
+El cliente reserva en `/<slug>/reservar` (servicio, profesional, día y hora, datos) y recibe un
+enlace secreto `/<slug>/cita/<token>` con su código, "Agregar a Google Calendar" y "Confirmar por
+WhatsApp". Si escribe su correo y hay `RESEND_API_KEY`, también le llega por correo.
+
+Pruebas de punta a punta: `npm run test:e2e` (compila la app, la levanta en el puerto 3200 y crea y
+borra reservas "E2E ..." en la base de `DATABASE_URL`).
 
 > Las secciones de despliegue y la guía completa de demos personalizadas se completan en las Fases 10 y 11.

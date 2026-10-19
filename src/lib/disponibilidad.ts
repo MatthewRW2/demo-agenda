@@ -86,6 +86,11 @@ function instanteBogota(fecha: string, minutosDelDia: number): Date {
   return new Date(t.getTime());
 }
 
+/** Inicio (inclusive) y fin (exclusivo) en UTC de un día del calendario de Bogotá. */
+export function limitesDelDia(fecha: string): { desde: Date; hasta: Date } {
+  return { desde: instanteBogota(fecha, 0), hasta: instanteBogota(sumarDias(fecha, 1), 0) };
+}
+
 function horaDeMinutos(minutos: number): string {
   return `${String(Math.floor(minutos / 60)).padStart(2, "0")}:${String(minutos % 60).padStart(2, "0")}`;
 }
