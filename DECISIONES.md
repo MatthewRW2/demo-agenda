@@ -57,3 +57,16 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   restricción. Contra Neon se comprueba con `npm run db:migrate`.
 - La IP para el límite de reservas (Fase 5) no se guarda aún; se añadirá con su migración cuando haga falta.
 - `getDb()` crea la conexión al primer uso, para que `next build` no exija `DATABASE_URL`.
+
+## Neon (conexión de la Fase 2)
+
+- **Proyecto Neon enlazado con `neon init` / `neon deploy`**: crea `neon.ts` (sin servicios extra: solo
+  Postgres; `auth: false`) y escribe `DATABASE_URL`, `DATABASE_URL_UNPOOLED` y `NEON_BRANCH` en
+  `.env.local` (ignorado por git). Rama `production`, región `aws-us-east-1`.
+- **Driver `@neondatabase/serverless` por HTTP con la URL con pooler** (`DATABASE_URL`) para la app;
+  **conexión directa** (`DATABASE_URL_UNPOOLED`) para las migraciones de `drizzle-kit`.
+- **Solo Postgres.** No se activaron Auth, Storage, Functions ni AI Gateway: no se necesitan y el
+  proyecto debe seguir en plan gratuito.
+- **`GET /api/salud`** consulta la base y responde 200/503; sirve para verificar el despliegue.
+- **`npm run db:verificar`** prueba contra la base real que existe la restricción, que rechaza un
+  traslape y que acepta una cita contigua; borra lo que crea.

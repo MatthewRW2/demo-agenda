@@ -14,9 +14,12 @@
     "nuevo-negocio": "tsx scripts/nuevo-negocio.ts",
     "validar-tenants": "tsx scripts/validar-tenants.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:verificar": "tsx scripts/verificar-db.ts"
   },
   "dependencies": {
+    "@neon/config": "^1.9.2",
+    "@neon/env": "^1.6.3",
     "@neondatabase/serverless": "^1.2.0",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.2",

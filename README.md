@@ -18,13 +18,14 @@ npm run dev                  # http://localhost:3000
 
 ## Variables de entorno
 
-| Variable         | Obligatoria | Descripción                                 |
-| ---------------- | ----------- | ------------------------------------------- |
-| `DATABASE_URL`   | Sí (Fase 2) | Cadena de conexión Postgres (Neon)          |
-| `ADMIN_PASSWORD` | Sí (Fase 7) | Contraseña del panel `/<slug>/admin`        |
-| `RESEND_API_KEY` | No          | Si falta, no se envían correos y nada falla |
-| `APP_URL`        | Sí          | URL pública de la app, sin barra final      |
-| `CRON_SECRET`    | Sí (Fase 8) | Protege el cron que restablece la demo      |
+| Variable                | Obligatoria      | Descripción                                 |
+| ----------------------- | ---------------- | ------------------------------------------- |
+| `DATABASE_URL`          | Sí               | Conexión a Postgres en Neon (con pooler)    |
+| `DATABASE_URL_UNPOOLED` | Para migraciones | Conexión directa de Neon (sin pooler)       |
+| `ADMIN_PASSWORD`        | Sí (Fase 7)      | Contraseña del panel `/<slug>/admin`        |
+| `RESEND_API_KEY`        | No               | Si falta, no se envían correos y nada falla |
+| `APP_URL`               | Sí               | URL pública de la app, sin barra final      |
+| `CRON_SECRET`           | Sí (Fase 8)      | Protege el cron que restablece la demo      |
 
 ## Scripts
 
@@ -39,6 +40,7 @@ npm run dev                  # http://localhost:3000
 | `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla            |
 | `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts` |
 | `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`             |
+| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape      |
 | `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                 |
 
 ## Negocios (tenants)
@@ -57,8 +59,9 @@ Las imágenes de cada negocio viven en `public/tenants/<slug>/`.
 
 ## Base de datos
 
-Postgres en [Neon](https://neon.tech) (plan gratuito) con Drizzle ORM. Define `DATABASE_URL` en
-`.env.local` y corre `npm run db:migrate`. Las migraciones están en `drizzle/`.
+Postgres en [Neon](https://neon.tech) (plan gratuito) con Drizzle ORM. Define `DATABASE_URL` y
+`DATABASE_URL_UNPOOLED` en `.env.local` (con `neon deploy` se escriben solos) y corre
+`npm run db:migrate`. Comprueba la conexión con `npm run db:verificar` o con `GET /api/salud`. Las migraciones están en `drizzle/`.
 
 Las dobles reservas se evitan **en la base de datos**: la restricción `bookings_sin_traslape`
 (`EXCLUDE USING gist`, extensión `btree_gist`) rechaza dos reservas activas solapadas del mismo
