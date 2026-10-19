@@ -108,6 +108,12 @@ describe("validación: dice exactamente qué campo falla", () => {
     expect(detalles(t)).toEqual([expect.stringContaining("slug:")]);
   });
 
+  it("slug reservado por la app", () => {
+    const t = base();
+    t.slug = "api";
+    expect(detalles(t)).toEqual([expect.stringContaining("slug: es un nombre reservado")]);
+  });
+
   it("negocio cerrado todos los días", () => {
     const t = base();
     for (const d of Object.keys(t.horario)) t.horario[d] = null;

@@ -43,12 +43,12 @@ export function cargarTenant(slug: string, directorio = DIRECTORIO_TENANTS): Ten
   if (!SLUG_REGEX.test(slug)) return null;
 
   const archivo = path.join(directorio, `${slug}.json`);
-  if (!existsSync(archivo)) return null;
+  if (!existsSync(/*turbopackIgnore: true*/ archivo)) return null;
 
   const origen = `tenants/${slug}.json`;
   let crudo: unknown;
   try {
-    crudo = JSON.parse(readFileSync(archivo, "utf8"));
+    crudo = JSON.parse(readFileSync(/*turbopackIgnore: true*/ archivo, "utf8"));
   } catch (error) {
     const motivo = error instanceof Error ? error.message : String(error);
     throw new TenantInvalidoError(origen, [`no es JSON válido (${motivo})`]);
@@ -65,8 +65,8 @@ export function cargarTenant(slug: string, directorio = DIRECTORIO_TENANTS): Ten
 
 /** Slugs de los negocios disponibles (ignora archivos que empiezan por `_`, como la plantilla). */
 export function listarSlugs(directorio = DIRECTORIO_TENANTS): string[] {
-  if (!existsSync(directorio)) return [];
-  return readdirSync(directorio)
+  if (!existsSync(/*turbopackIgnore: true*/ directorio)) return [];
+  return readdirSync(/*turbopackIgnore: true*/ directorio)
     .filter((f) => f.endsWith(".json") && !f.startsWith("_"))
     .map((f) => f.slice(0, -".json".length))
     .sort();

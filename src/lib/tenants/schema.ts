@@ -45,9 +45,15 @@ const horarioSchema = z.object({
   dom: rangoSchema.nullable(),
 });
 
+/** Rutas de primer nivel que usa la app; un negocio con ese slug quedaría inalcanzable. */
+const SLUGS_RESERVADOS = ["api"];
+
 export const tenantSchema = z
   .object({
-    slug: slugSchema,
+    slug: slugSchema.refine(
+      (s) => !SLUGS_RESERVADOS.includes(s),
+      "es un nombre reservado por la app",
+    ),
     nombre: textoSchema,
     eslogan: textoSchema,
     logo: z.string().startsWith("/", "debe empezar con / (ruta dentro de public/)"),

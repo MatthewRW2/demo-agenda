@@ -96,3 +96,33 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - **Pruebas independientes de la zona del servidor**: pasan con `TZ=UTC`, `Asia/Tokyo` y
   `America/Los_Angeles` además de Bogotá (Vercel corre en UTC). Se verificó con mutaciones que
   fallan si se rompe una regla (anticipación, contiguos, cierre, canceladas, menos ocupado, UTC).
+
+## Fase 4
+
+- **Una sola página estática por negocio** (`generateStaticParams` + `[slug]/layout.tsx`): carga
+  instantánea y sin base de datos. Al añadir un negocio hay que volver a desplegar (ya es el flujo:
+  editar JSON y hacer push). Un slug desconocido responde 404.
+- **Marca por variables CSS**: el layout de `/[slug]` inyecta `--primario`, `--acento` y, calculados
+  con la fórmula de contraste WCAG, `--sobre-primario` y `--sobre-acento` (texto negro o blanco, el
+  que más contraste tenga). Así cualquier color de un prospecto deja el texto legible.
+- **El color de acento nunca se usa como texto sobre blanco** (un dorado no alcanza contraste AA);
+  solo como fondo de botones. El texto sobre blanco usa el color primario: si un prospecto elige un
+  primario muy claro, conviene revisarlo.
+- **Vista previa para WhatsApp** (`opengraph-image`): imagen 1200×630 generada al compilar con el
+  logo, nombre, eslogan, dirección y colores del negocio. La URL absoluta sale de `APP_URL`, o del
+  dominio de producción de Vercel (`VERCEL_PROJECT_PRODUCTION_URL`), o `localhost` en local.
+- **Mapa**: iframe de Google Maps por dirección (sin API key) con `loading="lazy"`, más enlace
+  "Cómo llegar".
+- **Barra "Reservar" fija abajo solo en celular**, además del botón grande de la portada.
+- **Plural del rol** (`textos.profesional`): "barbero" → "Nuestros barberos", "doctor" → "doctores".
+  Reglas simples; si alguna palabra sale mal, se corrige en `pluralizar`.
+- **Horas en formato de 12 horas** ("9:00 a. m.") como se usa en Colombia.
+- **Slug `api` reservado** para que ningún negocio tape `/api/salud`.
+- **Raíz `/`** redirige (307) a `/don-carlos` desde `next.config.ts`.
+- **`typecheck` ahora corre `next typegen` antes de `tsc`**, para que funcione en un clon limpio.
+- **Turbopack**: las lecturas con `fs` de `tenants/` llevan `turbopackIgnore` (ya se incluyen
+  explícitamente con `outputFileTracingIncludes`); sin eso rastreaba todo el proyecto.
+- **Medición** (Lighthouse 12, móvil, `next start` local): rendimiento 98, accesibilidad 100,
+  buenas prácticas 96, SEO 100. LCP 2,3 s, CLS 0. Lo único que baja buenas prácticas es el 404 de
+  `/<slug>/reservar`, que se crea en la Fase 5. Sin desbordes horizontales en 320–412 px.
+- El botón "Reservar" ya enlaza a `/<slug>/reservar`; esa pantalla llega en la Fase 5.

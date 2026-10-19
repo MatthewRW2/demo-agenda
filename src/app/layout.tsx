@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { urlBase } from "@/lib/enlaces";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -8,6 +9,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(urlBase()),
   title: "Reservas en línea",
   description: "Agenda tu cita en línea, rápido y desde el celular.",
 };

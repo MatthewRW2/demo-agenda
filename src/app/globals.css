@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
+/*
+ * Marca del negocio: el layout de /[slug] sobreescribe estas variables con los colores de su JSON.
+ * "sobre-*" es el color de texto con mejor contraste sobre cada fondo.
+ */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primario: #1f2937;
+  --acento: #c8a24a;
+  --sobre-primario: #ffffff;
+  --sobre-acento: #111111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primario: var(--primario);
+  --color-acento: var(--acento);
+  --color-sobre-primario: var(--sobre-primario);
+  --color-sobre-acento: var(--sobre-acento);
   --font-sans: var(--font-geist-sans);
 }
 
@@ -15,4 +27,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Foco visible en cualquier fondo: el contorno toma el color del texto del elemento. */
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
