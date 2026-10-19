@@ -67,12 +67,12 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
         >
           <div className="border-b border-neutral-200 bg-neutral-50" />
           {columnas.map((p) => (
-            <h3
+            <h2
               key={p.id}
               className="border-b border-l border-neutral-200 bg-neutral-50 p-2 text-center font-bold"
             >
               {p.nombre}
-            </h3>
+            </h2>
           ))}
 
           {/* columna de horas */}
@@ -145,7 +145,6 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
                       key={r.id}
                       href={`/${tenant.slug}/admin?vista=dia&fecha=${fecha}&cita=${r.id}`}
                       scroll={false}
-                      aria-label={`${hora}, ${r.customerName}, ${servicio}, ${ETIQUETA_ESTADO[r.status].toLowerCase()}`}
                       aria-current={seleccionada === r.id ? "true" : undefined}
                       data-cita={r.id}
                       className={`absolute inset-x-1 overflow-hidden rounded-lg px-2 py-1 text-xs leading-tight shadow-sm ${COLOR_ESTADO[r.status]} ${

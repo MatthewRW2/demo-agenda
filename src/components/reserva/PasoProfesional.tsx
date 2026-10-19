@@ -24,7 +24,7 @@ export function PasoProfesional({ tenant, servicioId, onElegir }: Props) {
         <li key={p.id}>
           <button type="button" onClick={() => onElegir(p.id)} className={CLASE_OPCION}>
             <span className="flex items-center gap-3">
-              <Avatar src={p.foto} nombre={p.nombre} tamano={44} />
+              <Avatar src={p.foto} nombre={p.nombre} tamano={44} decorativo />
               <span className="font-semibold">{p.nombre}</span>
             </span>
           </button>

@@ -3,7 +3,7 @@ import type { Tenant } from "@/lib/tenants/schema";
 /** Lo que el navegador necesita saber del negocio para reservar (nada más viaja al cliente). */
 export type TenantPublico = Pick<
   Tenant,
-  "slug" | "nombre" | "textos" | "servicios" | "profesionales"
+  "slug" | "nombre" | "textos" | "servicios" | "profesionales" | "whatsapp"
 >;
 
 export type Paso = "servicio" | "profesional" | "fechaHora" | "datos";

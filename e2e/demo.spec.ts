@@ -40,9 +40,7 @@ test("la franja 'Demo con datos ficticios' aparece en el sitio, la reserva y el 
 }) => {
   for (const ruta of [NEGOCIO, `${NEGOCIO}/reservar`, ADMIN]) {
     await page.goto(ruta);
-    await expect(
-      page.getByRole("note").filter({ hasText: "Demo con datos ficticios" }),
-    ).toBeVisible();
+    await expect(page.getByRole("complementary", { name: "Aviso de demostración" })).toBeVisible();
   }
 });
 
@@ -136,6 +134,8 @@ test.describe("el panel se ve vivo con los datos de ejemplo", () => {
     const tenant = cargarTenant("don-carlos")!;
     await entrar(page, `${ADMIN}?vista=semana`);
     const citas = page.getByRole("listitem").filter({ hasText: /\d:\d\d [ap]\. m\. ·/ });
+    // El panel llega por streaming: se espera a que aparezca el contenido antes de contar
+    await expect(citas.first()).toBeVisible();
     expect(await citas.count()).toBeGreaterThanOrEqual(5);
 
     // Recordatorios de mañana
@@ -143,6 +143,7 @@ test.describe("el panel se ve vivo con los datos de ejemplo", () => {
     await page.goto(`${ADMIN}/recordatorios`);
     if (tenant.horario[diaDeSemana(manana)]) {
       const botones = page.getByRole("link", { name: /Enviar recordatorio|Enviar de nuevo/ });
+      await expect(botones.first()).toBeVisible();
       expect(await botones.count()).toBeGreaterThanOrEqual(3);
     } else {
       await expect(page.getByText("No hay citas confirmadas para mañana")).toBeVisible();

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { obtenerHorariosAccion, reservarAccion } from "@/app/[slug]/reservar/acciones";
+import { enlaceWhatsApp } from "@/lib/enlaces";
 import { erroresPorCampo, reservaSchema } from "@/lib/validacion";
 import { PasoDatos } from "./PasoDatos";
 import { PasoFechaHora } from "./PasoFechaHora";
@@ -156,6 +157,34 @@ export function FlujoReserva({ tenant, dias }: Props) {
       setErrorGeneral("No pudimos completar tu reserva. Revisa tu conexión e inténtalo de nuevo.");
     }
     setEnviando(false);
+  }
+
+  if (dias.length === 0) {
+    return (
+      <div className="mx-auto w-full max-w-lg px-4 py-10 text-center">
+        <h1 className="mb-3 text-2xl font-bold">Por ahora no hay días para reservar</h1>
+        <p className="mb-6 text-neutral-700">
+          No tenemos días disponibles en este momento. Escríbenos por WhatsApp y te ayudamos a
+          conseguir tu {tenant.textos.reserva}.
+        </p>
+        <a
+          href={enlaceWhatsApp(tenant.whatsapp, `Hola, quiero pedir una ${tenant.textos.reserva}.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-acento text-sobre-acento inline-flex min-h-14 w-full items-center justify-center rounded-xl text-lg font-bold"
+        >
+          Escribir por WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
+        </a>
+        <p className="mt-4">
+          <Link
+            href={`/${tenant.slug}`}
+            className="text-primario font-semibold underline underline-offset-4"
+          >
+            Volver
+          </Link>
+        </p>
+      </div>
+    );
   }
 
   return (

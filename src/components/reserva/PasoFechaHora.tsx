@@ -35,9 +35,8 @@ export function PasoFechaHora({
                 <button
                   type="button"
                   aria-pressed={elegido}
-                  aria-label={formatearFechaLarga(d)}
                   onClick={() => onElegirFecha(d)}
-                  className={`flex min-h-20 w-16 flex-col items-center justify-center rounded-xl border-2 transition ${
+                  className={`relative flex min-h-20 w-16 flex-col items-center justify-center rounded-xl border-2 transition ${
                     elegido
                       ? "border-primario bg-primario text-sobre-primario"
                       : "hover:border-primario border-neutral-200 bg-white"
@@ -46,6 +45,7 @@ export function PasoFechaHora({
                   <span className="text-xs uppercase">{c.diaSemana}</span>
                   <span className="text-xl font-bold">{c.dia}</span>
                   <span className="text-xs">{c.mes}</span>
+                  <span className="sr-only">, {formatearFechaLarga(d)}</span>
                 </button>
               </li>
             );

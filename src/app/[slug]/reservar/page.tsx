@@ -24,11 +24,11 @@ export default async function PaginaReservar({ params }: PageProps<"/[slug]/rese
   const tenant = obtenerTenant(slug);
   if (!tenant) notFound();
 
-  const { nombre, textos, servicios, profesionales } = tenant;
+  const { nombre, textos, servicios, profesionales, whatsapp } = tenant;
   return (
     <main className="flex-1">
       <FlujoReserva
-        tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales }}
+        tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales, whatsapp }}
         dias={diasDisponibles(tenant, new Date())}
       />
     </main>

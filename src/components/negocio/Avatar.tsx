@@ -5,11 +5,13 @@ interface Props {
   nombre: string;
   tamano: number;
   prioridad?: boolean;
+  /** Si la persona ya está nombrada en texto al lado, la imagen es decorativa (alt vacío). */
+  decorativo?: boolean;
   className?: string;
 }
 
 /** Imagen redonda de logo o persona. Los SVG no pasan por el optimizador de imágenes. */
-export function Avatar({ src, nombre, tamano, prioridad, className = "" }: Props) {
+export function Avatar({ src, nombre, tamano, prioridad, decorativo, className = "" }: Props) {
   if (!src) {
     return (
       <span
@@ -24,7 +26,7 @@ export function Avatar({ src, nombre, tamano, prioridad, className = "" }: Props
   return (
     <Image
       src={src}
-      alt={nombre}
+      alt={decorativo ? "" : nombre}
       width={tamano}
       height={tamano}
       priority={prioridad}

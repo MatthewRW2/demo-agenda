@@ -17,7 +17,7 @@ export function Profesionales({ tenant }: { tenant: Tenant }) {
             key={p.id}
             className="flex flex-col items-center gap-2 rounded-xl border border-neutral-200 bg-white p-4 text-center"
           >
-            <Avatar src={p.foto} nombre={p.nombre} tamano={88} />
+            <Avatar src={p.foto} nombre={p.nombre} tamano={88} decorativo />
             <p className="font-semibold">{p.nombre}</p>
             <p className="text-sm text-neutral-600">
               {p.servicios.map((id) => nombresServicio.get(id)).join(" · ")}

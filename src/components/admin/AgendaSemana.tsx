@@ -29,7 +29,7 @@ export function AgendaSemana({ tenant, lunes, reservas }: Props) {
         const activas = delDia.filter((r) => r.status !== "cancelada");
         return (
           <li key={fecha} className="rounded-xl border border-neutral-200">
-            <h3 className="flex items-center justify-between gap-2 border-b border-neutral-200 bg-neutral-50 p-3 font-bold">
+            <h2 className="flex items-center justify-between gap-2 border-b border-neutral-200 bg-neutral-50 p-3 font-bold">
               <Link
                 href={`/${tenant.slug}/admin?vista=dia&fecha=${fecha}`}
                 className="text-primario underline underline-offset-4"
@@ -39,7 +39,7 @@ export function AgendaSemana({ tenant, lunes, reservas }: Props) {
               <span className="text-sm font-normal text-neutral-700">
                 {activas.length} cita{activas.length === 1 ? "" : "s"}
               </span>
-            </h3>
+            </h2>
             {delDia.length === 0 ? (
               <p className="p-3 text-sm text-neutral-600">Sin citas.</p>
             ) : (

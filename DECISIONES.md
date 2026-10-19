@@ -290,3 +290,32 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - **Las pruebas e2e dejan la demo sembrada**: el test del cron vuelve a sembrar `don-carlos`. Los tests de
   reserva, gestión y bloqueos se hicieron robustos ante horas ocupadas por la demo (comparan antes y después en
   vez de suponer una hora libre).
+
+## Fase 9
+
+- **Auditoría automática de accesibilidad** (`e2e/accesibilidad.spec.ts`, axe-core con WCAG 2.0/2.1/2.2 A y AA
+  más buenas prácticas) sobre todas las pantallas **y sus estados**: sitio, 404 general y dentro del negocio,
+  cada paso de la reserva (incluido el formulario con errores), la cita (vista, confirmar cancelación y cambiar
+  horario), el acceso al panel (con error), agenda del día con detalle de cita y formularios desplegados,
+  semana, recordatorios, métricas y el diálogo de restablecer demo. Hoy no hay ninguna violación.
+- **Hallazgos corregidos**: la franja de demo y la barra fija de "Reservar" estaban fuera de cualquier región
+  (ahora `aside` y `section` con nombre); contraste insuficiente en el "404" decorativo; fotos de profesionales
+  con `alt` repetido junto al nombre (ahora decorativas); encabezados h3 bajo un h1 en la agenda (ahora h2); y
+  `aria-label` que no contenían el texto visible en los botones de día y en las citas de la agenda
+  (WCAG 2.5.3, importante para control por voz): el nombre accesible ahora sale del contenido visible.
+- **Defecto que introduje y la prueba atrapó**: al arreglar lo anterior, un texto `sr-only` en los botones de día
+  ensanchaba toda la página 450 px (el elemento absoluto escapaba del recorte del carrusel). Se corrigió con
+  `relative` en el botón, y la prueba de 320 px ahora abre el carrusel, las horas, los formularios y los paneles
+  de la cita (antes solo cargaba pantallas cerradas). Verificado: sin el `relative`, la prueba falla.
+- **Páginas nuevas**: 404 general y 404 dentro del negocio (conserva sus colores y vuelve a su inicio), pantalla
+  de error con "Intentar de nuevo" (`retry`, la API de esta versión de Next) también para el layout raíz
+  (`global-error`), y esqueleto de carga del panel. **No hay `loading.tsx` en la página de la cita** a propósito:
+  con streaming el 404 de un token inexistente saldría con estado 200.
+- **Estado vacío nuevo**: si no hay ningún día reservable (por ejemplo, ventana de 1 día y hoy cerrado), la
+  reserva muestra un mensaje amable con botón de WhatsApp en vez de un carrusel vacío. Revisado a mano con un
+  negocio temporal; no tiene prueba automática (haría falta un negocio de prueba cuyo calendario cambie cada día).
+- **Pantalla de error y 404 sin prueba automática de contenido**: se revisaron visualmente provocando un fallo
+  con una página temporal (borrada); axe sí cubre las dos 404.
+- **Lo que no se puede comprobar desde aquí**: recorrer el flujo en un celular físico. Está cubierto por
+  emulación de Pixel 7, 320–412 px y las pruebas de arriba; la verificación en un teléfono real queda para la
+  lista de `docs/despliegue.md` (Fase 10).

@@ -47,7 +47,8 @@ export async function hastaDatos(page: Page, profesional: string, hora?: string)
 
   const dias = page.getByRole("list", { name: "Días disponibles" }).getByRole("button");
   const ultimo = dias.last();
-  const dia = (await ultimo.getAttribute("aria-label"))!;
+  // El botón dice "LUN 19 oct" y, solo para lectores de pantalla, ", lunes 19 de octubre"
+  const dia = (await ultimo.locator(".sr-only").textContent())!.replace(/^,\s*/, "");
   await ultimo.click();
 
   const horas = page
