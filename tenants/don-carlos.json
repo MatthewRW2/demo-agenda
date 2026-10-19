@@ -1,0 +1,50 @@
+{
+  "slug": "don-carlos",
+  "nombre": "Barbería Don Carlos",
+  "eslogan": "Cortes clásicos y modernos en Chapinero",
+  "logo": "/tenants/don-carlos/logo.svg",
+  "colores": { "primario": "#1F2937", "acento": "#C8A24A" },
+  "whatsapp": "573001234567",
+  "direccion": "Cra. 13 #54-20, Chapinero, Bogotá",
+  "instagram": "barberiadoncarlos",
+  "horario": {
+    "lun": ["09:00", "19:00"],
+    "mar": ["09:00", "19:00"],
+    "mie": ["09:00", "19:00"],
+    "jue": ["09:00", "19:00"],
+    "vie": ["09:00", "20:00"],
+    "sab": ["08:00", "18:00"],
+    "dom": null
+  },
+  "intervaloMin": 15,
+  "anticipacionMinHoras": 2,
+  "diasReservables": 14,
+  "servicios": [
+    { "id": "corte", "nombre": "Corte clásico", "duracionMin": 30, "precio": 25000 },
+    { "id": "corte-barba", "nombre": "Corte + barba", "duracionMin": 50, "precio": 40000 },
+    { "id": "barba", "nombre": "Arreglo de barba", "duracionMin": 25, "precio": 18000 },
+    { "id": "nino", "nombre": "Corte niño", "duracionMin": 25, "precio": 20000 }
+  ],
+  "profesionales": [
+    {
+      "id": "carlos",
+      "nombre": "Carlos",
+      "foto": "/tenants/don-carlos/carlos.svg",
+      "servicios": ["corte", "corte-barba", "barba"]
+    },
+    {
+      "id": "andres",
+      "nombre": "Andrés",
+      "foto": "/tenants/don-carlos/andres.svg",
+      "servicios": ["corte", "corte-barba", "barba", "nino"]
+    },
+    {
+      "id": "mateo",
+      "nombre": "Mateo",
+      "foto": "/tenants/don-carlos/mateo.svg",
+      "servicios": ["corte", "nino"]
+    }
+  ],
+  "textos": { "profesional": "barbero", "reserva": "cita" },
+  "demo": true
+}

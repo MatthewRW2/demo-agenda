@@ -1,0 +1,31 @@
+{
+  "slug": "nombre-del-negocio",
+  "nombre": "Nombre del Negocio",
+  "eslogan": "Una frase corta que describa el negocio",
+  "logo": "/tenants/nombre-del-negocio/logo.svg",
+  "colores": { "primario": "#1F2937", "acento": "#C8A24A" },
+  "whatsapp": "573000000000",
+  "direccion": "Calle 00 #00-00, Barrio, Ciudad",
+  "instagram": "usuario_de_instagram",
+  "horario": {
+    "lun": ["09:00", "18:00"],
+    "mar": ["09:00", "18:00"],
+    "mie": ["09:00", "18:00"],
+    "jue": ["09:00", "18:00"],
+    "vie": ["09:00", "18:00"],
+    "sab": ["09:00", "14:00"],
+    "dom": null
+  },
+  "intervaloMin": 15,
+  "anticipacionMinHoras": 2,
+  "diasReservables": 14,
+  "servicios": [
+    { "id": "servicio-1", "nombre": "Servicio 1", "duracionMin": 30, "precio": 30000 },
+    { "id": "servicio-2", "nombre": "Servicio 2", "duracionMin": 60, "precio": 60000 }
+  ],
+  "profesionales": [
+    { "id": "profesional-1", "nombre": "Profesional 1", "servicios": ["servicio-1", "servicio-2"] }
+  ],
+  "textos": { "profesional": "profesional", "reserva": "cita" },
+  "demo": true
+}

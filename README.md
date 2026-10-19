@@ -28,13 +28,29 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Comando             | Qué hace                   |
-| ------------------- | -------------------------- |
-| `npm run dev`       | Servidor de desarrollo     |
-| `npm run build`     | Compilación de producción  |
-| `npm run lint`      | ESLint                     |
-| `npm run typecheck` | TypeScript sin emitir      |
-| `npm test`          | Pruebas unitarias (Vitest) |
-| `npm run format`    | Formatea con Prettier      |
+| Comando                                      | Qué hace                                 |
+| -------------------------------------------- | ---------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                   |
+| `npm run build`                              | Compilación de producción                |
+| `npm run lint`                               | ESLint                                   |
+| `npm run typecheck`                          | TypeScript sin emitir                    |
+| `npm test`                                   | Pruebas unitarias (Vitest)               |
+| `npm run format`                             | Formatea con Prettier                    |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`      |
 
-> Las secciones de despliegue y creación de negocios se completan en las Fases 10 y 11.
+## Negocios (tenants)
+
+Cada negocio es `tenants/<slug>.json`, validado con Zod al cargarse. Si un campo está mal, el error
+indica cuál (por ejemplo `servicios[1].precio: debe ser un número entero en COP, 0 o mayor`).
+`tenants/_plantilla.json` es la base de los negocios nuevos; los archivos que empiezan por `_` no
+cuentan como negocios.
+
+```bash
+npm run nuevo-negocio -- clinica-sonrisa "Clínica Dental Sonrisa"
+npm run validar-tenants
+```
+
+Las imágenes de cada negocio viven en `public/tenants/<slug>/`.
+
+> Las secciones de despliegue y la guía completa de demos personalizadas se completan en las Fases 10 y 11.
