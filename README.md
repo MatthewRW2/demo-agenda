@@ -28,16 +28,18 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Comando                                      | Qué hace                                 |
-| -------------------------------------------- | ---------------------------------------- |
-| `npm run dev`                                | Servidor de desarrollo                   |
-| `npm run build`                              | Compilación de producción                |
-| `npm run lint`                               | ESLint                                   |
-| `npm run typecheck`                          | TypeScript sin emitir                    |
-| `npm test`                                   | Pruebas unitarias (Vitest)               |
-| `npm run format`                             | Formatea con Prettier                    |
-| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla |
-| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`      |
+| Comando                                      | Qué hace                                            |
+| -------------------------------------------- | --------------------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                              |
+| `npm run build`                              | Compilación de producción                           |
+| `npm run lint`                               | ESLint                                              |
+| `npm run typecheck`                          | TypeScript sin emitir                               |
+| `npm test`                                   | Pruebas unitarias (Vitest)                          |
+| `npm run format`                             | Formatea con Prettier                               |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla            |
+| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts` |
+| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`             |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                 |
 
 ## Negocios (tenants)
 
@@ -52,5 +54,14 @@ npm run validar-tenants
 ```
 
 Las imágenes de cada negocio viven en `public/tenants/<slug>/`.
+
+## Base de datos
+
+Postgres en [Neon](https://neon.tech) (plan gratuito) con Drizzle ORM. Define `DATABASE_URL` en
+`.env.local` y corre `npm run db:migrate`. Las migraciones están en `drizzle/`.
+
+Las dobles reservas se evitan **en la base de datos**: la restricción `bookings_sin_traslape`
+(`EXCLUDE USING gist`, extensión `btree_gist`) rechaza dos reservas activas solapadas del mismo
+profesional. `npm test` la verifica contra un Postgres embebido, sin necesidad de Neon.
 
 > Las secciones de despliegue y la guía completa de demos personalizadas se completan en las Fases 10 y 11.

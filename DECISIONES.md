@@ -35,3 +35,25 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   al despliegue de Vercel.
 - **Se añadió `npm run validar-tenants`** (no estaba pedido): revisa todos los JSON de una vez.
 - Los tenants se leen del disco en cada petición (son archivos pequeños); sin caché por ahora.
+
+## Fase 2
+
+- **La restricción vive en SQL, no en Drizzle.** Drizzle no sabe declarar `EXCLUDE USING gist`; está en
+  `drizzle/0001_exclusion_traslapes.sql` (migración personalizada, junto con
+  `CREATE EXTENSION btree_gist`). `drizzle-kit migrate` la aplica igual que las demás.
+- **Rango semiabierto `[inicio, fin)`**: una cita que termina a las 10:00 y otra que empieza a las
+  10:00 no se traslapan. Las citas `completada` y `no_asistio` siguen ocupando el horario; solo
+  `cancelada` lo libera. Reactivar una cancelada cuyo horario ya se tomó también se rechaza.
+- **Los bloqueos no tienen restricción en la base.** Una exclusión no puede cruzar dos tablas, así que
+  "reserva vs bloqueo" se valida en el servidor (motor de disponibilidad, Fase 3 y 7).
+- **`bookings.professional_id` es obligatorio.** Para "cualquiera" el motor asigna un profesional
+  concreto antes de insertar; así la restricción siempre aplica.
+- **Columna extra `reminder_sent_at`** en `bookings` para marcar recordatorios enviados (Fase 7).
+- **`status` y `source` como enums de Postgres**, más `CHECK (ends_at > starts_at)` en ambas tablas.
+- **`neon-http`** (HTTP sin estado) como driver: encaja con funciones serverless de Vercel. No admite
+  transacciones interactivas; se usan sentencias únicas o `db.batch`.
+- **Pruebas con PGlite** (Postgres real compilado a WASM, con `btree_gist`) aplicando las mismas
+  migraciones de `drizzle/`: corren sin cuenta ni red. Verificado que fallan si se quita la
+  restricción. Contra Neon se comprueba con `npm run db:migrate`.
+- La IP para el límite de reservas (Fase 5) no se guarda aún; se añadirá con su migración cuando haga falta.
+- `getDb()` crea la conexión al primer uso, para que `next build` no exija `DATABASE_URL`.
