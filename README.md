@@ -18,34 +18,35 @@ npm run dev                  # http://localhost:3000
 
 ## Variables de entorno
 
-| Variable                | Obligatoria      | Descripción                                 |
-| ----------------------- | ---------------- | ------------------------------------------- |
-| `DATABASE_URL`          | Sí               | Conexión a Postgres en Neon (con pooler)    |
-| `DATABASE_URL_UNPOOLED` | Para migraciones | Conexión directa de Neon (sin pooler)       |
-| `ADMIN_PASSWORD`        | Sí (Fase 7)      | Contraseña del panel `/<slug>/admin`        |
-| `RESEND_API_KEY`        | No               | Si falta, no se envían correos y nada falla |
-| `APP_URL`               | Sí               | URL pública de la app, sin barra final      |
-| `CRON_SECRET`           | Sí (Fase 8)      | Protege el cron que restablece la demo      |
+| Variable                | Obligatoria                 | Descripción                                                                                                                           |
+| ----------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`          | Sí                          | Conexión a Postgres en Neon (con pooler)                                                                                              |
+| `DATABASE_URL_UNPOOLED` | Solo para migraciones       | Conexión directa de Neon (sin pooler); la usa `npm run db:migrate`, no hace falta en Vercel                                           |
+| `ADMIN_PASSWORD`        | Sí, para usar el panel      | Contraseña del panel `/<slug>/admin`. Sin ella el panel queda cerrado                                                                 |
+| `CRON_SECRET`           | Sí, para el cron de la demo | Protege `/api/cron/restablecer-demo`. Sin ella el cron responde 401                                                                   |
+| `APP_URL`               | En producción               | URL pública sin barra final; se usa en la vista previa del link y en los correos. Si falta, se usa el dominio de producción de Vercel |
+| `RESEND_API_KEY`        | No                          | Si falta, no se envían correos y nada falla                                                                                           |
+| `RESEND_FROM`           | No                          | Remitente de los correos (por defecto, el de pruebas de Resend)                                                                       |
 
 ## Scripts
 
-| Comando                                      | Qué hace                                                                         |
-| -------------------------------------------- | -------------------------------------------------------------------------------- |
-| `npm run dev`                                | Servidor de desarrollo                                                           |
-| `npm run build`                              | Compilación de producción                                                        |
-| `npm run lint`                               | ESLint                                                                           |
-| `npm run typecheck`                          | TypeScript sin emitir                                                            |
-| `npm test`                                   | Pruebas unitarias (Vitest)                                                       |
-| `npm run format`                             | Formatea con Prettier                                                            |
-| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                                         |
-| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                              |
-| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                          |
-| `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo           |
-| `npm run verificar-despliegue -- <url>`      | Comprobaciones de humo sobre una app desplegada                                  |
-| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                                   |
-| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real)                      |
-| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/` (`-- --estricto`: los avisos también fallan) |
-| `npm run vaciar-demo -- <slug>`              | Borra las citas y bloqueos de un negocio demo (para pasarlo a cliente real)      |
+| Comando                                      | Qué hace                                                                                      |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                                                                        |
+| `npm run build`                              | Compilación de producción                                                                     |
+| `npm run lint`                               | ESLint                                                                                        |
+| `npm run typecheck`                          | TypeScript sin emitir                                                                         |
+| `npm test`                                   | Pruebas unitarias (Vitest)                                                                    |
+| `npm run format`                             | Formatea con Prettier                                                                         |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                                                      |
+| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                                           |
+| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                                       |
+| `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo                        |
+| `npm run verificar-despliegue -- <url>`      | Comprobaciones de humo sobre una app desplegada                                               |
+| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                                                |
+| `npm run test:e2e`                           | Pruebas de punta a punta con Playwright (usa Chrome y la base real; vuelve a sembrar la demo) |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/` (`-- --estricto`: los avisos también fallan)              |
+| `npm run vaciar-demo -- <slug>`              | Borra las citas y bloqueos de un negocio demo (para pasarlo a cliente real)                   |
 
 ## Negocios (tenants)
 
@@ -55,7 +56,7 @@ indica cuál (por ejemplo `servicios[1].precio: debe ser un número entero en CO
 cuentan como negocios.
 
 ```bash
-npm run nuevo-negocio -- clinica-sonrisa "Clínica Dental Sonrisa"
+npm run nuevo-negocio -- mi-negocio "Mi Negocio"
 npm run validar-tenants
 ```
 
