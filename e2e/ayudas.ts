@@ -1,13 +1,35 @@
+import { randomBytes } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { like } from "drizzle-orm";
 import { getDb } from "../src/db";
-import { bookings } from "../src/db/schema";
+import { blocks, bookings, type NuevaBooking } from "../src/db/schema";
 
 /** Todo lo que crean las pruebas lleva el nombre "E2E ..." y se borra antes y después. */
 export const NEGOCIO = "/don-carlos";
 
 export async function borrarReservasDePrueba() {
   await getDb().delete(bookings).where(like(bookings.customerName, "E2E %"));
+  await getDb().delete(blocks).where(like(blocks.reason, "E2E %"));
+}
+
+/** Crea una reserva directamente en la base (para preparar datos que la web no permite crear). */
+export async function crearReservaDirecta(
+  datos: Pick<NuevaBooking, "customerName" | "startsAt"> & Partial<NuevaBooking>,
+) {
+  const duracion = 30 * 60_000;
+  const [fila] = await getDb()
+    .insert(bookings)
+    .values({
+      tenantSlug: "don-carlos",
+      serviceId: "corte",
+      professionalId: "carlos",
+      endsAt: new Date(datos.startsAt.getTime() + duracion),
+      customerPhone: "3000000000",
+      manageToken: randomBytes(32).toString("base64url"),
+      ...datos,
+    })
+    .returning();
+  return fila;
 }
 
 /**

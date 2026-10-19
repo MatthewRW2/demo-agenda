@@ -64,6 +64,11 @@ export function sumarDias(fecha: string, dias: number): string {
   return formatearFecha(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
 }
 
+/** Lunes de la semana (lunes a domingo) a la que pertenece una fecha YYYY-MM-DD. */
+export function lunesDeLaSemana(fecha: string): string {
+  return sumarDias(fecha, -DIAS.indexOf(diaDeSemana(fecha)));
+}
+
 /** Clave del día de la semana (lun…dom) de una fecha YYYY-MM-DD. */
 export function diaDeSemana(fecha: string): Dia {
   const [anio, mes, dia] = partesDeFecha(fecha);
@@ -72,7 +77,7 @@ export function diaDeSemana(fecha: string): Dia {
 }
 
 /** Instante UTC de una hora de pared en Bogotá. */
-function instanteBogota(fecha: string, minutosDelDia: number): Date {
+export function instanteBogota(fecha: string, minutosDelDia: number): Date {
   const [anio, mes, dia] = partesDeFecha(fecha);
   const t = new TZDate(
     anio,

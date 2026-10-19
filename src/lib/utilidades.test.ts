@@ -7,7 +7,13 @@ import {
   urlBase,
   urlMapaEmbebido,
 } from "./enlaces";
-import { capitalizar, formatearDuracion, formatearHora, pluralizar } from "./texto";
+import {
+  capitalizar,
+  formatearDuracion,
+  formatearHora,
+  formatearHoraCorta,
+  pluralizar,
+} from "./texto";
 
 describe("color", () => {
   it("luminancia de negro y blanco", () => {
@@ -65,6 +71,15 @@ describe("texto", () => {
     ["23:30", "11:30 p. m."],
   ])("formatea la hora %s como %s", (entrada, esperado) => {
     expect(formatearHora(entrada)).toBe(esperado);
+  });
+
+  it.each([
+    ["09:00", "9 a. m."],
+    ["12:00", "12 p. m."],
+    ["00:00", "12 a. m."],
+    ["13:30", "1:30 p. m."],
+  ])("hora corta %s -> %s", (entrada, esperado) => {
+    expect(formatearHoraCorta(entrada)).toBe(esperado);
   });
 
   it("formatea duraciones", () => {

@@ -9,6 +9,7 @@ import { diasDisponibles } from "@/lib/disponibilidad";
 import { enlaceGoogleCalendar, enlaceWhatsApp } from "@/lib/enlaces";
 import { formatearFechaHora } from "@/lib/fechas";
 import { formatearCOP } from "@/lib/moneda";
+import { ETIQUETA_ESTADO } from "@/lib/estados";
 import { codigoReserva, enlaceConfirmarPorWhatsApp } from "@/lib/reserva";
 import { obtenerTenant } from "@/lib/tenants/obtener";
 import { buscarReservaPorToken } from "@/server/reservas/consultas";
@@ -22,13 +23,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   referrer: "no-referrer",
 };
-
-const ETIQUETA_ESTADO = {
-  confirmada: "Confirmada",
-  completada: "Completada",
-  no_asistio: "No asististe",
-  cancelada: "Cancelada",
-} as const;
 
 const BOTON_SECUNDARIO =
   "inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border-2 border-primario px-5 font-semibold text-primario";

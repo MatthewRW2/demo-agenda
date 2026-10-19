@@ -30,6 +30,12 @@ export function formatearHora(hhmm: string): string {
   return `${h12}:${String(m).padStart(2, "0")} ${sufijo}`;
 }
 
+/** "9:00" -> "9 a. m." (sin minutos si es en punto), para etiquetas angostas como las de la agenda. */
+export function formatearHoraCorta(hhmm: string): string {
+  const completa = formatearHora(hhmm);
+  return completa.replace(":00 ", " ");
+}
+
 export function formatearDuracion(minutos: number): string {
   if (minutos < 60) return `${minutos} min`;
   const h = Math.floor(minutos / 60);

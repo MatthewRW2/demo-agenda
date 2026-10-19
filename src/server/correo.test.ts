@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { codigoReserva, enlaceConfirmarPorWhatsApp } from "@/lib/reserva";
+import { codigoReserva, enlaceConfirmarPorWhatsApp, enlaceRecordatorio } from "@/lib/reserva";
 import { tenantDePrueba } from "@/test/tenantDePrueba";
 import { enviarCorreo, plantillaConfirmacion, remitenteDe } from "./correo";
 
@@ -121,5 +121,28 @@ describe("reserva", () => {
     expect(texto).toContain("Hola, soy María");
     expect(texto).toContain("lunes 4 de marzo, 3:00 p. m.");
     expect(texto).toContain("Código: A3F9C2");
+  });
+});
+
+describe("enlaceRecordatorio", () => {
+  const base = {
+    tenant: tenantDePrueba,
+    nombreCliente: "María Fernanda Pérez",
+    celular: "3001234567",
+    hora: "3:00 p. m.",
+    enlaceGestion: "https://demo.ejemplo.com/prueba/cita/abc",
+  };
+
+  it("va al celular del cliente con el mensaje del recordatorio y el enlace de gestión", () => {
+    const url = new URL(enlaceRecordatorio(base)!);
+    expect(url.origin + url.pathname).toBe("https://wa.me/573001234567");
+    expect(url.searchParams.get("text")).toBe(
+      "Hola María, te recordamos tu cita mañana a las 3:00 p. m. en Barbería de Prueba. " +
+        "Si no puedes asistir, cámbiala o cancélala aquí: https://demo.ejemplo.com/prueba/cita/abc",
+    );
+  });
+
+  it("sin celular no hay enlace", () => {
+    expect(enlaceRecordatorio({ ...base, celular: "" })).toBeNull();
   });
 });

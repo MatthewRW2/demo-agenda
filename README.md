@@ -77,6 +77,18 @@ WhatsApp". Si escribe su correo y hay `RESEND_API_KEY`, también le llega por co
 Desde ese enlace el cliente puede **cancelar** o **cambiar el día u hora** de su cita, siempre que falte
 al menos la anticipación mínima del negocio (`anticipacionMinHoras`); si falta menos, se le ofrece WhatsApp.
 
+## Panel del negocio
+
+`/<slug>/admin` (contraseña = `ADMIN_PASSWORD`; en los negocios con `"demo": true` se muestra en la pantalla de
+acceso). Tiene:
+
+- **Agenda** por día (una columna por profesional) y por semana; cambiar el estado de cada cita (completada,
+  no asistió, cancelada), crear citas manuales para quien llega sin reserva y bloquear horarios.
+- **Recordatorios**: las citas de mañana, con botón de WhatsApp que marca el recordatorio como enviado.
+- **Métricas de la semana**: citas, % de inasistencias, ingresos estimados, servicio más pedido y hora más ocupada.
+
+Si `ADMIN_PASSWORD` no está definida, el panel queda cerrado. Cambiarla cierra todas las sesiones.
+
 Pruebas de punta a punta: `npm run test:e2e` (compila la app, la levanta en el puerto 3200 y crea y
 borra reservas "E2E ..." en la base de `DATABASE_URL`).
 

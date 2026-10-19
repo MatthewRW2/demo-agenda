@@ -201,3 +201,50 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - Hallazgos corregidos al probar: tras un cambio exitoso el panel quedaba abierto con datos viejos (la página
   no se desmonta al navegar); y las pruebas se pisaban entre sí al leer filas (ahora cada una empieza con la
   base limpia y consulta por su nombre).
+
+## Fase 7
+
+- **Acceso**: una sola `ADMIN_PASSWORD` para todos los negocios (como pide el documento) y una cookie por
+  negocio (`admin_<slug>`): `httpOnly`, `SameSite=Lax`, `Secure` en producción, ruta `/<slug>/admin` y 7 días
+  de vigencia. La cookie es `<carga>.<HMAC-SHA256>`; la carga lleva el slug y la expiración, así que una
+  cookie de un negocio no sirve en otro. La clave de firma se deriva de la contraseña: **cambiar
+  `ADMIN_PASSWORD` cierra todas las sesiones**. No hace falta otra variable de entorno.
+- **Falla cerrada**: si `ADMIN_PASSWORD` no está definida, el panel muestra "Panel no disponible" y nadie
+  entra (una contraseña vacía nunca es válida).
+- **La sesión se comprueba en cada página y en cada acción del servidor**, no en el layout: las acciones son
+  endpoints públicos y un layout no las protege. Verificado con mutaciones (acciones sin comprobar sesión
+  y páginas siempre abiertas hacen fallar las pruebas).
+- **Contraseña**: comparación en tiempo constante y una demora fija de 0,7 s tras un intento fallido. **No hay
+  bloqueo por intentos** (en serverless un contador en memoria no es fiable y no se añadió tabla para esto):
+  en producción conviene una contraseña larga. Pendiente si se quiere endurecer.
+- **Modo demo**: si el negocio tiene `"demo": true`, la pantalla de acceso muestra la contraseña. Un negocio
+  real (`"demo": false`) nunca la muestra.
+- **Aislamiento entre negocios**: toda operación del panel filtra por `tenant_slug` en el propio SQL; con un
+  id de otro negocio no se lee ni se toca nada (probado). Los ids deben ser UUID válidos antes de llegar a la base.
+- **Agenda del día**: una columna por profesional, escala 1,4 px por minuto (30 min = 42 px). La franja
+  visible es el horario del local, ampliada si hay citas o bloqueos fuera de él. En el celular la tabla se
+  desliza de lado (con una pista escrita). Las **canceladas no se dibujan** (liberan el hueco y podrían
+  solaparse con otra cita) y se cuentan debajo.
+- **Semana como lista por día** (no como cuadrícula): se lee mejor en el celular y cada cita abre su detalle.
+- **Detalle de cita por URL** (`?cita=<id>`): se puede compartir y funciona sin JavaScript para abrirlo.
+- **Cualquier estado puede pasar a cualquier otro** (incluido volver de cancelada a confirmada). Si el hueco ya
+  lo ocupó otra cita, la restricción de la base lo impide y se avisa en vez de fallar.
+- **Cita manual**: ignora la anticipación mínima y la ventana de días (se calcula "desde el inicio de ese día"),
+  así se registra a quien ya está en la silla, también horas de hoy que ya pasaron o días pasados. Sigue
+  respetando horario del local, rejilla, bloqueos y traslapes. **El celular es opcional** (se guarda vacío); el
+  recordatorio de esa cita dice "Sin celular". Origen `admin`.
+- **Bloqueos**: de un profesional o de todo el local, con motivo. Si caen sobre citas confirmadas **no las
+  cancelan**: se avisa cuántas hay. Se pueden quitar desde la agenda.
+- **Recordatorios**: citas confirmadas de mañana (calendario de Bogotá). El botón es un enlace `wa.me` con el
+  mensaje escrito (incluye el enlace para cambiar o cancelar); al pulsarlo se marca `reminder_sent_at` y la
+  fila queda "✓ Recordatorio enviado" (se puede reenviar). Cambiar la cita de hora borra la marca.
+- **Métricas** (semana de lunes a domingo, Bogotá): _citas_ = no canceladas; _inasistencias %_ = no asistió ÷
+  (completadas + no asistió), con un decimal, y "—" si aún no hay ninguna resuelta; _ingresos estimados_ =
+  precio de lista de las confirmadas y completadas (no cuentan inasistencias ni canceladas); _servicio más
+  pedido_ y _hora más ocupada_ sobre las no canceladas, con desempate por el orden del JSON y por la hora más
+  temprana.
+- **Pruebas**: 10 de sesión, 21 de agenda/métricas, 24 de operaciones contra Postgres real y 14 de Playwright
+  (acceso con cookie `httpOnly`, sesión vencida, agenda, estados, cita manual, bloqueo con efecto real en el
+  flujo público, recordatorio con WhatsApp interceptado, métricas con cifras exactas).
+- Hallazgo al probar: una mutación mostró que el "override" de reglas del panel no estaba cubierto (con una
+  anticipación grande del negocio, la agenda interna quedaba bloqueada); se añadió la prueba.
