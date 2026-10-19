@@ -41,6 +41,7 @@ npm run dev                  # http://localhost:3000
 | `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                    |
 | `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                |
 | `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo |
+| `npm run verificar-despliegue -- <url>`      | Comprobaciones de humo sobre una app desplegada                        |
 | `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                         |
 | `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real)            |
 | `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                                    |
@@ -108,4 +109,8 @@ comando, botón ni cron puede tocar sus datos.
 Pruebas de punta a punta: `npm run test:e2e` (compila la app, la levanta en el puerto 3200 y crea y
 borra reservas "E2E ..." en la base de `DATABASE_URL`).
 
-> Las secciones de despliegue y la guía completa de demos personalizadas se completan en las Fases 10 y 11.
+## Despliegue
+
+Guía paso a paso (GitHub, Neon, Vercel, migraciones, cron y verificación en el celular): **[docs/despliegue.md](docs/despliegue.md)**.
+
+> La guía completa de demos personalizadas se completa en la Fase 11.

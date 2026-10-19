@@ -319,3 +319,26 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - **Lo que no se puede comprobar desde aquí**: recorrer el flujo en un celular físico. Está cubierto por
   emulación de Pixel 7, 320–412 px y las pruebas de arriba; la verificación en un teléfono real queda para la
   lista de `docs/despliegue.md` (Fase 10).
+
+## Fase 10
+
+- **El despliegue en Vercel lo hace la persona dueña de la cuenta** (hay que iniciar sesión): se deja
+  `docs/despliegue.md` con los pasos exactos y todo lo demás ya verificado desde aquí.
+- **Comprobado antes de desplegar**: el build pasa **sin ninguna variable de entorno** (la conexión a la base se
+  crea al primer uso, no al compilar) y los JSON de `tenants/` viajan con las páginas dinámicas (reservar, cita y
+  panel) según los archivos de trazado de Next.
+- **Región fijada en `vercel.json`** (`iad1`, Virginia) para que las funciones queden junto a la base de Neon
+  (`aws-us-east-1`): lo que más pesa en cada reserva es la distancia entre la app y la base. No se midió la
+  latencia desde Colombia frente a otras regiones de Neon; queda como posible ajuste.
+- **`npm run verificar-despliegue -- <url>`**: 9 comprobaciones de humo que no modifican datos (la raíz, el sitio,
+  la imagen de vista previa descargable y en el dominio correcto, `/api/salud`, reserva, panel sin sesión,
+  404 y que el cron rechace peticiones sin secreto). La regla de la vista previa es una función pura con
+  pruebas (imagen a `localhost`, en otro dominio, relativa, ausente). Verificado contra la app local (todo en
+  verde) y sin servidor (falla con código 1).
+- **Aviso sobre un solo entorno**: hoy desarrollo y producción comparten la rama `production` de Neon. Las
+  pruebas e2e vuelven a sembrar `don-carlos`. La guía explica cómo separar con `neon checkout dev --create`
+  y advierte que esas ramas **expiran a los 7 días** por la política de `neon.ts`, y que ese comando
+  reescribe `DATABASE_URL` en `.env.local`. No se hizo automáticamente para no cambiar tu entorno sin pedirlo.
+- **Plan Hobby**: uso no comercial y un cron al día. Se dejó escrito en la guía.
+- **Lo que no se pudo verificar aquí**: el despliegue real, el cron ejecutado por Vercel, la vista previa dentro
+  de WhatsApp y el recorrido en un teléfono físico. Todo eso está en la lista del paso 6.
