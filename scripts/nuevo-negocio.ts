@@ -18,7 +18,9 @@ try {
   console.log("  1. Edita el JSON: colores, servicios, precios, profesionales, horario, WhatsApp.");
   console.log("  2. Reemplaza logo.svg y agrega las fotos de los profesionales.");
   console.log(`  3. npm run validar-tenants   (revisa que el JSON esté bien)`);
-  console.log(`  4. npm run seed -- ${slug}   (datos de ejemplo, disponible desde la Fase 8)`);
+  console.log(
+    `  4. npm run seed -- ${slug}   (datos de ejemplo; solo si el JSON tiene \"demo\": true)`,
+  );
   console.log(`  5. Abre http://localhost:3000/${slug}`);
 } catch (error) {
   if (error instanceof TenantInvalidoError) {

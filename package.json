@@ -18,7 +18,8 @@
     "db:verificar": "tsx scripts/verificar-db.ts",
     "test:e2e": "playwright test",
     "seed": "tsx scripts/seed.ts",
-    "verificar-despliegue": "tsx scripts/verificar-despliegue.ts"
+    "verificar-despliegue": "tsx scripts/verificar-despliegue.ts",
+    "vaciar-demo": "tsx scripts/vaciar-demo.ts"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",

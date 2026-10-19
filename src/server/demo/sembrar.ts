@@ -39,3 +39,25 @@ export async function sembrarDemo(
 
   return { reservas: reservas.length, bloqueos: bloqueos.length };
 }
+
+/**
+ * Borra TODAS las citas y bloqueos de un negocio de demostración, sin sembrar nada. Es el paso previo a
+ * convertir una demo en un cliente real: se vacía mientras sigue siendo `"demo": true` y después se
+ * cambia a `false`. Con un negocio real (`"demo": false`) lanza un error antes de tocar la base.
+ */
+export async function vaciarDemo(db: BaseDatos, tenant: Tenant): Promise<ResumenSiembra> {
+  if (!tenant.demo) {
+    throw new Error(
+      `"${tenant.slug}" no es un negocio de demostración ("demo": false): no se borran sus datos.`,
+    );
+  }
+  const reservas = await db
+    .delete(bookings)
+    .where(eq(bookings.tenantSlug, tenant.slug))
+    .returning({ id: bookings.id });
+  const bloqueos = await db
+    .delete(blocks)
+    .where(eq(blocks.tenantSlug, tenant.slug))
+    .returning({ id: blocks.id });
+  return { reservas: reservas.length, bloqueos: bloqueos.length };
+}

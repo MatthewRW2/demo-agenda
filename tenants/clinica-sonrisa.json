@@ -1,0 +1,48 @@
+{
+  "slug": "clinica-sonrisa",
+  "nombre": "Clínica Dental Sonrisa",
+  "eslogan": "Cuidamos tu sonrisa con calidez y tecnología en Usaquén",
+  "logo": "/tenants/clinica-sonrisa/logo.svg",
+  "colores": { "primario": "#0F4C5C", "acento": "#F4B860" },
+  "whatsapp": "573102345678",
+  "direccion": "Cra. 7 #116-50, Usaquén, Bogotá",
+  "instagram": "clinicadentalsonrisa",
+  "horario": {
+    "lun": ["08:00", "18:00"],
+    "mar": ["08:00", "18:00"],
+    "mie": ["08:00", "18:00"],
+    "jue": ["08:00", "18:00"],
+    "vie": ["08:00", "17:00"],
+    "sab": ["08:00", "13:00"],
+    "dom": null
+  },
+  "intervaloMin": 30,
+  "anticipacionMinHoras": 4,
+  "diasReservables": 21,
+  "servicios": [
+    { "id": "valoracion", "nombre": "Valoración inicial", "duracionMin": 30, "precio": 40000 },
+    { "id": "limpieza", "nombre": "Limpieza dental", "duracionMin": 60, "precio": 90000 },
+    { "id": "blanqueamiento", "nombre": "Blanqueamiento", "duracionMin": 90, "precio": 350000 },
+    { "id": "resina", "nombre": "Resina (calza)", "duracionMin": 60, "precio": 120000 },
+    { "id": "ortodoncia", "nombre": "Control de ortodoncia", "duracionMin": 30, "precio": 70000 }
+  ],
+  "profesionales": [
+    {
+      "id": "dra-mejia",
+      "nombre": "Dra. Laura Mejía",
+      "servicios": ["valoracion", "limpieza", "blanqueamiento"]
+    },
+    {
+      "id": "dr-pardo",
+      "nombre": "Dr. Andrés Pardo",
+      "servicios": ["valoracion", "resina", "ortodoncia"]
+    },
+    {
+      "id": "dra-ruiz",
+      "nombre": "Dra. Camila Ruiz",
+      "servicios": ["valoracion", "limpieza", "resina"]
+    }
+  ],
+  "textos": { "profesional": "odontólogo", "reserva": "cita" },
+  "demo": true
+}

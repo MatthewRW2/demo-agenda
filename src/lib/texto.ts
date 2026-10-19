@@ -42,3 +42,32 @@ export function formatearDuracion(minutos: number): string {
   const m = minutos % 60;
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
+
+// Palabras que no aportan a las iniciales de un nombre: conectores y títulos ("Dra. Laura Mejía" -> "LM").
+const PALABRAS_SIN_INICIAL = new Set([
+  "de",
+  "del",
+  "la",
+  "el",
+  "los",
+  "las",
+  "y",
+  "&",
+  "dr",
+  "dr.",
+  "dra",
+  "dra.",
+  "sr",
+  "sr.",
+  "sra",
+  "sra.",
+]);
+
+/** Hasta dos iniciales de un nombre, ignorando conectores y títulos: "Spa de la Luna" -> "SL". */
+export function iniciales(nombre: string): string {
+  const palabras = nombre
+    .split(/\s+/)
+    .filter((p) => p && !PALABRAS_SIN_INICIAL.has(p.toLowerCase()));
+  const letras = palabras.slice(0, 2).map((p) => Array.from(p)[0]);
+  return letras.join("").toLocaleUpperCase("es-CO") || "?";
+}

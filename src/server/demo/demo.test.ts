@@ -15,7 +15,7 @@ import { tenantDePrueba } from "@/test/tenantDePrueba";
 import type { Tenant } from "@/lib/tenants/schema";
 import { autorizadoCron } from "./cron";
 import { generarDatosDemo, type DatosDemo } from "./datos";
-import { sembrarDemo } from "./sembrar";
+import { sembrarDemo, vaciarDemo } from "./sembrar";
 
 const bogota = (fecha: string, hora: string) => new Date(`${fecha}T${hora}:00-05:00`);
 const minutos = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3));
@@ -286,6 +286,28 @@ describe("sembrarDemo contra Postgres real", () => {
     const antes = await contar("otro-demo");
     await sembrarDemo(base(), tenantDePrueba, MIERCOLES);
     expect(await contar("otro-demo")).toEqual(antes);
+  });
+
+  it("vaciarDemo borra solo las citas y bloqueos de ese negocio y cuenta lo borrado", async () => {
+    const otro = { ...tenantDePrueba, slug: "otro-vaciar" };
+    await sembrarDemo(base(), otro, MIERCOLES);
+    const sembrado = await sembrarDemo(base(), tenantDePrueba, MIERCOLES);
+    const intacto = await contar("otro-vaciar");
+
+    expect(await vaciarDemo(base(), tenantDePrueba)).toEqual(sembrado);
+    expect(await contar("prueba")).toEqual({ reservas: 0, bloqueos: 0 });
+    expect(await contar("otro-vaciar")).toEqual(intacto);
+    // vaciar algo ya vacío no falla
+    expect(await vaciarDemo(base(), tenantDePrueba)).toEqual({ reservas: 0, bloqueos: 0 });
+  });
+
+  it("vaciarDemo también se niega con un negocio real y no borra nada", async () => {
+    await sembrarDemo(base(), tenantDePrueba, MIERCOLES);
+    const antes = await contar("prueba");
+    await expect(vaciarDemo(base(), { ...tenantDePrueba, demo: false })).rejects.toThrow(
+      /no es un negocio de demostración/,
+    );
+    expect(await contar("prueba")).toEqual(antes);
   });
 
   it("se niega a tocar un negocio que no es de demostración y no borra nada", async () => {

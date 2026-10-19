@@ -342,3 +342,33 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - **Plan Hobby**: uso no comercial y un cron al día. Se dejó escrito en la guía.
 - **Lo que no se pudo verificar aquí**: el despliegue real, el cron ejecutado por Vercel, la vista previa dentro
   de WhatsApp y el recorrido en un teléfono físico. Todo eso está en la lista del paso 6.
+
+## Fase 11
+
+- **El proceso se probó de verdad**: se creó `tenants/clinica-sonrisa.json` (consultorio odontológico, 3
+  odontólogos, 5 servicios, cita de 30 min, `"profesional": "odontólogo"`) con `npm run nuevo-negocio`, siguiendo
+  los pasos de `docs/nueva-demo.md`. Sin tocar código, ya tiene su página (otro aspecto), su flujo de reserva
+  ("¿Con qué odontólogo?", solo los que hacen cada servicio, rejilla de 30 min), su panel y sus datos de ejemplo.
+  Queda cubierto con `e2e/consultorio.spec.ts` (marca y textos propios, flujo completo, accesibilidad y que la
+  sesión y el enlace de cita de un negocio no abran el otro).
+- **Tiempo**: los pasos automáticos tardan segundos; el tiempo real depende de reunir los datos del prospecto.
+  La guía da un presupuesto de ~20 minutos y dice claramente que es una **estimación, no una medición**.
+- **Fricciones encontradas al seguir el proceso y corregidas**:
+  1. Los valores de relleno de la plantilla (`Calle 00 #00-00`, `Servicio 1`, `usuario_de_instagram`…) pasan el
+     esquema y se podían publicar por olvido. Ahora `validar-tenants` los marca como **avisos** y
+     `-- --estricto` hace fallar el comando (la plantilla misma no se avisa: sus valores son a propósito).
+  2. Los avatares tomaban solo la primera letra, así que "Dra. Laura Mejía" salía "D". Ahora son dos iniciales y
+     se ignoran conectores y títulos (Dr., Dra., Sr., Sra.): "LM".
+  3. Los mensajes de la app están en femenino ("tu cita quedó confirmada"): `textos.reserva` masculino (turno)
+     saldría mal concordado. Se avisa y la guía recomienda cita, consulta, sesión o reserva.
+  4. Un color primario claro se leería mal (se usa como texto sobre blanco): también avisa (era una nota de la Fase 4).
+  5. El texto de ayuda de `nuevo-negocio` mencionaba "la Fase 8"; ya dice cuándo se puede sembrar.
+- **Convertir una demo en cliente real** (no estaba pedido, pero faltaba la mitad del camino): con `"demo": false`
+  ninguna herramienta puede borrar datos, así que las citas ficticias se habrían quedado. Nuevo
+  `npm run vaciar-demo -- <slug>`, con la misma guarda que el seed (solo `"demo": true`), probado contra Postgres
+  real y con mutaciones (sin guarda y sin filtrar por negocio, fallan las pruebas). Orden: vaciar y luego cambiar
+  a `false`.
+- **Un solo despliegue comparte `ADMIN_PASSWORD`** entre todos sus negocios y el plan Hobby no es comercial; un
+  cliente que pague debe ir en su propio despliegue. Está en la guía y en `docs/despliegue.md`.
+- **El cron diario también siembra el consultorio** (recorre todos los negocios demo); la prueba del cron ahora
+  acepta varios negocios.

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { iniciales } from "@/lib/texto";
 
 interface Props {
   src?: string;
@@ -16,10 +17,10 @@ export function Avatar({ src, nombre, tamano, prioridad, decorativo, className =
     return (
       <span
         aria-hidden
-        style={{ width: tamano, height: tamano }}
+        style={{ width: tamano, height: tamano, fontSize: Math.round(tamano * 0.38) }}
         className={`bg-primario text-sobre-primario inline-flex items-center justify-center rounded-full font-bold ${className}`}
       >
-        {nombre.charAt(0).toLocaleUpperCase("es-CO")}
+        {iniciales(nombre)}
       </span>
     );
   }

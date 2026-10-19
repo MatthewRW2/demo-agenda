@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { iniciales } from "../texto";
 import { validarTenant } from "./cargar";
 import { SLUG_REGEX } from "./schema";
 
 const SLUG_PLANTILLA = "nombre-del-negocio";
 const NOMBRE_PLANTILLA = "Nombre del Negocio";
-const PALABRAS_VACIAS = new Set(["de", "del", "la", "el", "los", "las", "y", "&"]);
 
 export interface OpcionesCrearNegocio {
   slug: string;
@@ -26,12 +26,6 @@ function escaparXml(texto: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
-
-export function iniciales(nombre: string): string {
-  const palabras = nombre.split(/\s+/).filter((p) => p && !PALABRAS_VACIAS.has(p.toLowerCase()));
-  const letras = palabras.slice(0, 2).map((p) => Array.from(p)[0]);
-  return letras.join("").toUpperCase() || "?";
 }
 
 /** Logo provisional: círculo con las iniciales, para no depender de imágenes con derechos. */

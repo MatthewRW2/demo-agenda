@@ -9,7 +9,8 @@ import {
   listarSlugs,
   validarTenant,
 } from "./cargar";
-import { crearNegocio, iniciales } from "./crear";
+import { iniciales } from "../texto";
+import { crearNegocio } from "./crear";
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -224,5 +225,9 @@ describe("iniciales", () => {
     expect(iniciales("Clínica Dental Sonrisa")).toBe("CD");
     expect(iniciales("Spa de la Luna")).toBe("SL");
     expect(iniciales("Álvaro")).toBe("Á");
+    expect(iniciales("Dra. Laura Mejía")).toBe("LM");
+    expect(iniciales("Dr. Andrés Pardo")).toBe("AP");
+    expect(iniciales("Sra. de la Luna")).toBe("L");
+    expect(iniciales("   ")).toBe("?");
   });
 });

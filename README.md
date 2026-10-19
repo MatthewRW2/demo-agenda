@@ -29,22 +29,23 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Comando                                      | Qué hace                                                               |
-| -------------------------------------------- | ---------------------------------------------------------------------- |
-| `npm run dev`                                | Servidor de desarrollo                                                 |
-| `npm run build`                              | Compilación de producción                                              |
-| `npm run lint`                               | ESLint                                                                 |
-| `npm run typecheck`                          | TypeScript sin emitir                                                  |
-| `npm test`                                   | Pruebas unitarias (Vitest)                                             |
-| `npm run format`                             | Formatea con Prettier                                                  |
-| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                               |
-| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                    |
-| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                |
-| `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo |
-| `npm run verificar-despliegue -- <url>`      | Comprobaciones de humo sobre una app desplegada                        |
-| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                         |
-| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real)            |
-| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                                    |
+| Comando                                      | Qué hace                                                                         |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                                                           |
+| `npm run build`                              | Compilación de producción                                                        |
+| `npm run lint`                               | ESLint                                                                           |
+| `npm run typecheck`                          | TypeScript sin emitir                                                            |
+| `npm test`                                   | Pruebas unitarias (Vitest)                                                       |
+| `npm run format`                             | Formatea con Prettier                                                            |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                                         |
+| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                              |
+| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                          |
+| `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo           |
+| `npm run verificar-despliegue -- <url>`      | Comprobaciones de humo sobre una app desplegada                                  |
+| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                                   |
+| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real)                      |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/` (`-- --estricto`: los avisos también fallan) |
+| `npm run vaciar-demo -- <slug>`              | Borra las citas y bloqueos de un negocio demo (para pasarlo a cliente real)      |
 
 ## Negocios (tenants)
 
@@ -113,4 +114,12 @@ borra reservas "E2E ..." en la base de `DATABASE_URL`).
 
 Guía paso a paso (GitHub, Neon, Vercel, migraciones, cron y verificación en el celular): **[docs/despliegue.md](docs/despliegue.md)**.
 
-> La guía completa de demos personalizadas se completa en la Fase 11.
+## Demo personalizada para un prospecto
+
+Menos de 20 minutos por prospecto, sin tocar código: `npm run nuevo-negocio`, editar el JSON (nombre, logo,
+colores, servicios y precios de su Instagram o ficha de Google), subir el logo, `npm run seed -- <slug>` y
+`git push`. Guía completa, con la tabla de campos, una lista de revisión y cómo convertir la demo en un cliente
+real: **[docs/nueva-demo.md](docs/nueva-demo.md)**.
+
+Negocios incluidos: `don-carlos` (barbería, `"profesional": "barbero"`) y `clinica-sonrisa` (consultorio
+odontológico, `"profesional": "odontólogo"`), este último creado con ese mismo proceso para probarlo.

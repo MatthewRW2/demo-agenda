@@ -70,7 +70,13 @@ test.describe("cron diario", () => {
     expect(r.status()).toBe(200);
     const cuerpo = await r.json();
     expect(cuerpo.ok).toBe(true);
-    expect(cuerpo.negocios).toEqual([{ slug: "don-carlos", reservas: 60, bloqueos: 2 }]);
+    // Todos los negocios con "demo": true se restablecen (hoy: la barbería y el consultorio)
+    expect(cuerpo.negocios).toEqual(
+      expect.arrayContaining([
+        { slug: "clinica-sonrisa", reservas: 60, bloqueos: 2 },
+        { slug: "don-carlos", reservas: 60, bloqueos: 2 },
+      ]),
+    );
     expect(await contarDon()).toEqual({ reservas: 60, bloqueos: 2 });
     const fantasma = await getDb()
       .select()
