@@ -11,7 +11,13 @@ import type { EntradaReserva, Seleccion } from "@/lib/validacion";
 
 /** Lo que la lógica necesita de la base de datos. Se inyecta para poder probarla sin red. */
 export interface RepoReservas {
-  reservasDelDia(slug: string, desde: Date, hasta: Date): Promise<ReservaOcupada[]>;
+  /** `excluirId`: una reserva que no debe contarse como ocupada (la que se está moviendo). */
+  reservasDelDia(
+    slug: string,
+    desde: Date,
+    hasta: Date,
+    excluirId?: string,
+  ): Promise<ReservaOcupada[]>;
   bloqueosDelDia(slug: string, desde: Date, hasta: Date): Promise<BloqueoHorario[]>;
   /** Reservas confirmadas y futuras de ese celular en ese negocio. */
   contarActivasFuturas(slug: string, celular: string, ahora: Date): Promise<number>;
@@ -76,16 +82,17 @@ function resolver(tenant: Tenant, seleccion: Pick<Seleccion, "servicioId" | "pro
   return { ok: true as const, servicio };
 }
 
-async function horariosLibres(
+export async function horariosLibres(
   repo: RepoReservas,
   tenant: Tenant,
   seleccion: Seleccion,
   servicio: Tenant["servicios"][number],
   ahora: Date,
+  excluirId?: string,
 ): Promise<Horario[]> {
   const { desde, hasta } = limitesDelDia(seleccion.fecha);
   const [reservas, bloqueos] = await Promise.all([
-    repo.reservasDelDia(tenant.slug, desde, hasta),
+    repo.reservasDelDia(tenant.slug, desde, hasta, excluirId),
     repo.bloqueosDelDia(tenant.slug, desde, hasta),
   ]);
   return calcularHorarios(

@@ -74,6 +74,9 @@ El cliente reserva en `/<slug>/reservar` (servicio, profesional, día y hora, da
 enlace secreto `/<slug>/cita/<token>` con su código, "Agregar a Google Calendar" y "Confirmar por
 WhatsApp". Si escribe su correo y hay `RESEND_API_KEY`, también le llega por correo.
 
+Desde ese enlace el cliente puede **cancelar** o **cambiar el día u hora** de su cita, siempre que falte
+al menos la anticipación mínima del negocio (`anticipacionMinHoras`); si falta menos, se le ofrece WhatsApp.
+
 Pruebas de punta a punta: `npm run test:e2e` (compila la app, la levanta en el puerto 3200 y crea y
 borra reservas "E2E ..." en la base de `DATABASE_URL`).
 

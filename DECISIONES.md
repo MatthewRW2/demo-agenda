@@ -170,3 +170,34 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   unitarias.
 - **Medición** (Lighthouse móvil): `/<slug>` 98 / 100 / 100 / 100 (rendimiento, accesibilidad, buenas
   prácticas, SEO); `/<slug>/reservar` 98 / 100 / 100 / 60 (noindex).
+
+## Fase 6
+
+- **Qué puede hacer el cliente con su cita** (`/<slug>/cita/<token>`): ver, cancelar y cambiar día u hora.
+  El token secreto es la única credencial (no hay cuentas).
+- **Regla de anticipación**: solo se puede cancelar o cambiar si la cita sigue confirmada y falta **al menos
+  `anticipacionMinHoras`** del negocio (la misma regla que para reservar; justo 2 h sí, un minuto menos no).
+  Si falta menos, la página lo explica y ofrece WhatsApp con el código ya escrito. El nuevo horario al
+  cambiar también respeta la anticipación (lo garantiza el mismo motor de disponibilidad).
+- **Reprogramar conserva servicio y profesional** (lo más simple): si el profesional no tiene hueco, el
+  cliente cancela y reserva de nuevo, o escribe por WhatsApp. El propio hueco actual de la cita cuenta como
+  libre, así que se puede mover 15 minutos sin que choque consigo misma.
+- **El servidor vuelve a calcular** el horario al mover (igual que al reservar). Si alguien tomó el hueco,
+  responde "Ese horario se acaba de ocupar, elige otro." y la lista se actualiza.
+- **Operaciones atómicas**: cancelar y mover llevan la condición `status = 'confirmada'` dentro del propio
+  `UPDATE`; dos pestañas a la vez no se pisan y una cita cancelada no puede reactivarse moviéndola.
+- **Mover borra `reminder_sent_at`**: el recordatorio de la Fase 7 debe volver a enviarse para la nueva hora.
+- **Cancelar pide confirmación** ("¿Seguro?") y arrepentirse no cambia nada. Mover también pide un
+  "Confirmar cambio" explícito (elegir la hora no basta).
+- **Mover al mismo horario** responde "Ya tienes tu cita en ese horario" (sin cambios).
+- **Sin correo de cambio o cancelación** por ahora: no estaba pedido; se puede añadir con la misma
+  plantilla.
+- **Páginas de citas pasadas**: una cita confirmada cuya hora ya pasó muestra "ya pasó" y ninguna acción.
+- **Accesibilidad**: el foco pasa al título de cada panel; los títulos enfocados por código no dibujan
+  anillo (`[tabindex="-1"]`), los controles sí.
+- **Pruebas**: 31 unitarias nuevas contra Postgres real (PGlite) y 5 de Playwright (cancelar, cambiar,
+  carrera al cambiar, cita demasiado cercana, token inválido). Verificado con mutaciones (propia cita no
+  excluida, anticipación ignorada, estado sin condición en cancelar/mover, horario no validado).
+- Hallazgos corregidos al probar: tras un cambio exitoso el panel quedaba abierto con datos viejos (la página
+  no se desmonta al navegar); y las pruebas se pisaban entre sí al leer filas (ahora cada una empieza con la
+  base limpia y consulta por su nombre).

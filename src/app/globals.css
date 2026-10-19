@@ -35,6 +35,11 @@ body {
   outline-offset: 3px;
 }
 
+/* Los títulos reciben el foco por código al cambiar de paso; no son controles y no necesitan anillo. */
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

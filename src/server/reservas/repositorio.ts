@@ -2,14 +2,15 @@ import { and, count, eq, gt, gte, lt, ne } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { blocks, bookings } from "@/db/schema";
 import type * as schema from "@/db/schema";
-import type { RepoReservas } from "./servicio";
+import { buscarReservaPorToken } from "./consultas";
+import type { RepoGestion } from "./gestion";
 
 /** Cualquier base Drizzle de Postgres (Neon en producción, PGlite en las pruebas). */
 export type BaseDatos = PgDatabase<PgQueryResultHKT, typeof schema>;
 
-export function crearRepositorio(db: BaseDatos): RepoReservas {
+export function crearRepositorio(db: BaseDatos): RepoGestion {
   return {
-    async reservasDelDia(slug, desde, hasta) {
+    async reservasDelDia(slug, desde, hasta, excluirId) {
       const filas = await db
         .select({
           professionalId: bookings.professionalId,
@@ -24,6 +25,7 @@ export function crearRepositorio(db: BaseDatos): RepoReservas {
             ne(bookings.status, "cancelada"),
             lt(bookings.startsAt, hasta),
             gt(bookings.endsAt, desde),
+            excluirId ? ne(bookings.id, excluirId) : undefined,
           ),
         );
       return filas;
@@ -71,6 +73,27 @@ export function crearRepositorio(db: BaseDatos): RepoReservas {
         .values({ ...datos, source: "web" })
         .returning({ id: bookings.id });
       return fila;
+    },
+
+    buscarPorToken: (slug, token) => buscarReservaPorToken(db, slug, token),
+
+    // La condición de estado va en el propio UPDATE: así dos pestañas no se pisan.
+    async cancelar(id) {
+      const filas = await db
+        .update(bookings)
+        .set({ status: "cancelada" })
+        .where(and(eq(bookings.id, id), eq(bookings.status, "confirmada")))
+        .returning({ id: bookings.id });
+      return filas.length > 0;
+    },
+
+    async reprogramar(id, inicio, fin) {
+      const filas = await db
+        .update(bookings)
+        .set({ startsAt: inicio, endsAt: fin, reminderSentAt: null })
+        .where(and(eq(bookings.id, id), eq(bookings.status, "confirmada")))
+        .returning({ id: bookings.id });
+      return filas.length > 0;
     },
   };
 }
