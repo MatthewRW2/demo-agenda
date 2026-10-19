@@ -70,3 +70,29 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
 - **`GET /api/salud`** consulta la base y responde 200/503; sirve para verificar el despliegue.
 - **`npm run db:verificar`** prueba contra la base real que existe la restricción, que rechaza un
   traslape y que acepta una cita contigua; borra lo que crea.
+
+## Fase 3
+
+- **`calcularHorarios` es una función pura**: recibe todo (negocio, servicio, reservas, bloqueos, `ahora`)
+  y no toca la base ni el reloj. `fecha` es un `YYYY-MM-DD` del calendario de Bogotá; las reservas
+  y bloqueos llegan como `Date` (UTC). Quien la llame debe pasar solo los datos de ese negocio.
+- **Ventana de `diasReservables`**: son N días de calendario contando hoy (14 = hoy y los 13
+  siguientes). Hoy sigue siendo reservable con los horarios que queden después de la anticipación.
+- **Anticipación mínima inclusiva**: con 2 h y "ahora" 09:30, el 11:30 exacto sí se ofrece.
+- **Rejilla de inicios** desde la hora de apertura, cada `intervaloMin`; un inicio vale solo si el
+  servicio termina a más tardar al cierre.
+- **Traslape semiabierto `[inicio, fin)`**, igual que la restricción de la base de datos: terminar
+  justo cuando empieza otra cita es válido.
+- **"Cualquiera"**: se consideran solo los profesionales que hacen ese servicio. Cada hora aparece una
+  vez; se asigna al profesional libre con **menos minutos reservados ese día** (los empates los gana
+  el que aparece primero en el JSON). La carga se calcula con las reservas del día, no con las
+  asignaciones de otros horarios de la misma consulta.
+- **Al reservar (Fase 5) el servidor vuelve a calcular** y usa el `profesionalId` devuelto: así la
+  asignación nunca depende de lo que haya mostrado el cliente.
+- **Extras no pedidos** que la interfaz necesita: `diasDisponibles` (fechas del carrusel sin días
+  cerrados), `hoyEnBogota`, `sumarDias`, `diaDeSemana`.
+- **Fecha imposible o mal formada lanza error** (p. ej. `2030-02-31`); no devuelve lista vacía, para
+  no esconder errores del llamador.
+- **Pruebas independientes de la zona del servidor**: pasan con `TZ=UTC`, `Asia/Tokyo` y
+  `America/Los_Angeles` además de Bogotá (Vercel corre en UTC). Se verificó con mutaciones que
+  fallan si se rompe una regla (anticipación, contiguos, cierre, canceladas, menos ocupado, UTC).
