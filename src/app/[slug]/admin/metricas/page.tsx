@@ -96,7 +96,7 @@ export default async function PaginaMetricas({
             detalle={
               m.porcentajeInasistencias === null
                 ? "Aún no hay citas completadas ni inasistencias"
-                : `${m.inasistencias} de ${m.completadas + m.inasistencias} citas resueltas`
+                : `${m.inasistencias} de ${m.completadas + m.inasistencias} ${m.completadas + m.inasistencias === 1 ? "cita resuelta" : "citas resueltas"}`
             }
           />
           <Tarjeta

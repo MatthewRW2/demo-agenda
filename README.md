@@ -29,20 +29,21 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Comando                                      | Qué hace                                                    |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `npm run dev`                                | Servidor de desarrollo                                      |
-| `npm run build`                              | Compilación de producción                                   |
-| `npm run lint`                               | ESLint                                                      |
-| `npm run typecheck`                          | TypeScript sin emitir                                       |
-| `npm test`                                   | Pruebas unitarias (Vitest)                                  |
-| `npm run format`                             | Formatea con Prettier                                       |
-| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                    |
-| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`         |
-| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                     |
-| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape              |
-| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real) |
-| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                         |
+| Comando                                      | Qué hace                                                               |
+| -------------------------------------------- | ---------------------------------------------------------------------- |
+| `npm run dev`                                | Servidor de desarrollo                                                 |
+| `npm run build`                              | Compilación de producción                                              |
+| `npm run lint`                               | ESLint                                                                 |
+| `npm run typecheck`                          | TypeScript sin emitir                                                  |
+| `npm test`                                   | Pruebas unitarias (Vitest)                                             |
+| `npm run format`                             | Formatea con Prettier                                                  |
+| `npm run nuevo-negocio -- <slug> "<Nombre>"` | Crea un negocio nuevo desde la plantilla                               |
+| `npm run db:generate`                        | Genera una migración a partir de `src/db/schema.ts`                    |
+| `npm run db:migrate`                         | Aplica las migraciones a `DATABASE_URL`                                |
+| `npm run seed -- <slug>`                     | Reemplaza las citas y bloqueos de un negocio demo por datos de ejemplo |
+| `npm run db:verificar`                       | Prueba la base real: restricción anti-traslape                         |
+| `npm run test:e2e`                           | Flujo de reserva con Playwright (usa Chrome y la base real)            |
+| `npm run validar-tenants`                    | Valida todos los JSON de `tenants/`                                    |
 
 ## Negocios (tenants)
 
@@ -88,6 +89,21 @@ acceso). Tiene:
 - **Métricas de la semana**: citas, % de inasistencias, ingresos estimados, servicio más pedido y hora más ocupada.
 
 Si `ADMIN_PASSWORD` no está definida, el panel queda cerrado. Cambiarla cierra todas las sesiones.
+
+## Modo demo
+
+Con `"demo": true` en el JSON del negocio:
+
+- aparece la franja "Demo con datos ficticios" arriba de todas las pantallas;
+- el panel muestra la contraseña en la pantalla de acceso y un botón **Restablecer demo**;
+- `npm run seed -- <slug>` crea ~60 citas ficticias (últimas 2 semanas y próximas 2, con inasistencias y
+  cancelaciones) y 2 bloqueos. **Borra las citas y bloqueos que hubiera** de ese negocio, y se niega con
+  uno que tenga `"demo": false`;
+- el cron diario `GET /api/cron/restablecer-demo` (configurado en `vercel.json`) vuelve a sembrar todos los
+  negocios demo. Está protegido con `CRON_SECRET` (Vercel lo envía como `Authorization: Bearer ...`).
+
+Para un cliente real, cambia `"demo"` a `false`: desaparecen la franja y la contraseña en pantalla, y ningún
+comando, botón ni cron puede tocar sus datos.
 
 Pruebas de punta a punta: `npm run test:e2e` (compila la app, la levanta en el puerto 3200 y crea y
 borra reservas "E2E ..." en la base de `DATABASE_URL`).

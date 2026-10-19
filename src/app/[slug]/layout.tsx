@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
+import { FranjaDemo } from "@/components/negocio/FranjaDemo";
 import { colorTextoSobre } from "@/lib/color";
 import { listarSlugs } from "@/lib/tenants/cargar";
 import { obtenerTenant } from "@/lib/tenants/obtener";
@@ -23,6 +24,7 @@ export default async function NegocioLayout({ children, params }: LayoutProps<"/
 
   return (
     <div style={marca} className="flex flex-1 flex-col">
+      {tenant.demo && <FranjaDemo />}
       {children}
     </div>
   );

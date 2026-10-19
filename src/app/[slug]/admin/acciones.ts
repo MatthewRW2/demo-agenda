@@ -22,6 +22,7 @@ import {
   nombreCookie,
 } from "@/server/admin/sesion";
 import { MENSAJE_HORARIO_OCUPADO } from "@/db/errores";
+import { sembrarDemo } from "@/server/demo/sembrar";
 
 // Endpoints públicos: cada uno comprueba la sesión del negocio antes de hacer nada.
 
@@ -164,5 +165,23 @@ export async function marcarRecordatorioAccion(slug: string, id: string): Promis
   } catch (error) {
     console.error("Error marcando el recordatorio:", error);
     return { ok: false, mensaje: ERROR_GENERICO };
+  }
+}
+
+/** Vuelve a sembrar los datos de ejemplo. Solo existe para negocios marcados como demo. */
+export async function restablecerDemoAccion(
+  slug: string,
+): Promise<Respuesta<{ reservas: number; bloqueos: number }>> {
+  const c = await contexto(slug);
+  if (!c.ok) return { ok: false, mensaje: c.error };
+  if (!c.tenant.demo) {
+    return { ok: false, mensaje: "Este negocio no es una demo: sus datos no se restablecen." };
+  }
+  try {
+    const r = await sembrarDemo(getDb(), c.tenant, new Date());
+    return { ok: true, ...r };
+  } catch (error) {
+    console.error("Error restableciendo la demo:", error);
+    return { ok: false, mensaje: "No pudimos restablecer la demo. Inténtalo de nuevo." };
   }
 }

@@ -217,19 +217,8 @@ test.describe("bloqueos", () => {
   }) => {
     const tenant = cargarTenant("don-carlos")!;
     const dia = diasDisponibles(tenant, new Date()).at(-1)!; // último día reservable en la web
-    await entrar(page, `${ADMIN}?fecha=${dia}`);
 
-    await page.getByText("Bloquear un horario").click();
-    await page.locator("#bl-desde").fill("12:00");
-    await page.locator("#bl-hasta").fill("14:00");
-    await page.locator("#bl-motivo").fill("E2E almuerzo");
-    await page.getByRole("button", { name: "Bloquear horario" }).click();
-    await expect(page.getByText("Horario bloqueado.")).toBeVisible();
-    await expect(page.getByRole("list").filter({ hasText: "E2E almuerzo" })).toBeVisible();
-    // un bloqueo del local dibuja una banda en cada columna
-    await expect(page.locator("[data-bloqueo]")).toHaveCount(tenant.profesionales.length);
-
-    // El público (otro navegador) ya no ve esas horas
+    // El público (otro navegador). Se mide antes de bloquear para no depender de lo que reservó la demo.
     const publico = await browser.newContext({ locale: "es-CO", timezoneId: "America/Bogota" });
     const p = await publico.newPage();
     const horasPublicas = async () => {
@@ -242,19 +231,51 @@ test.describe("bloqueos", () => {
       await p.getByRole("button", { name: /Mateo/ }).click();
       await p.getByRole("list", { name: "Días disponibles" }).getByRole("button").last().click();
       await expect(listaDeHoras(p).getByRole("button").first()).toBeVisible();
-      return listaDeHoras(p);
+      return (await listaDeHoras(p).getByRole("button").allTextContents()).map((t) => t.trim());
     };
-    let horas = await horasPublicas();
-    await expect(horas.getByRole("button", { name: "12:00 p. m.", exact: true })).toHaveCount(0);
-    await expect(horas.getByRole("button", { name: "1:45 p. m.", exact: true })).toHaveCount(0);
-    await expect(horas.getByRole("button", { name: "11:30 a. m.", exact: true })).toBeVisible();
-    await expect(horas.getByRole("button", { name: "2:00 p. m.", exact: true })).toBeVisible();
+    // Un corte de 30 min que empieza entre 11:45 y 1:45 p. m. se cruza con un bloqueo de 12:00 a 2:00 p. m.
+    const BLOQUEADAS = new Set([
+      "11:45 a. m.",
+      "12:00 p. m.",
+      "12:15 p. m.",
+      "12:30 p. m.",
+      "12:45 p. m.",
+      "1:00 p. m.",
+      "1:15 p. m.",
+      "1:30 p. m.",
+      "1:45 p. m.",
+    ]);
+
+    const antes = await horasPublicas();
+    expect(
+      antes.some((h) => BLOQUEADAS.has(h)),
+      "hay horas libres en el rango que se va a bloquear",
+    ).toBe(true);
+
+    await entrar(page, `${ADMIN}?fecha=${dia}`);
+    await page.getByText("Bloquear un horario").click();
+    await page.locator("#bl-desde").fill("12:00");
+    await page.locator("#bl-hasta").fill("14:00");
+    await page.locator("#bl-motivo").fill("E2E almuerzo");
+    await page.getByRole("button", { name: "Bloquear horario" }).click();
+    await expect(page.getByText("Horario bloqueado.")).toBeVisible();
+    await expect(page.getByRole("list").filter({ hasText: "E2E almuerzo" })).toBeVisible();
+    // un bloqueo del local dibuja una banda en cada columna (se suman los de la demo del mismo día)
+    expect(await page.locator("[data-bloqueo]").count()).toBeGreaterThanOrEqual(
+      tenant.profesionales.length,
+    );
+
+    // Durante el bloqueo, el público pierde exactamente las horas que se cruzan con él
+    expect(await horasPublicas()).toEqual(antes.filter((h) => !BLOQUEADAS.has(h)));
 
     // Quitar el bloqueo devuelve las horas
-    await page.getByRole("button", { name: /Quitar bloqueo de Todo el local/ }).click();
-    await expect(page.locator("[data-bloqueo]")).toHaveCount(0);
-    horas = await horasPublicas();
-    await expect(horas.getByRole("button", { name: "12:00 p. m.", exact: true })).toBeVisible();
+    await page
+      .getByRole("listitem")
+      .filter({ hasText: "E2E almuerzo" })
+      .getByRole("button", { name: /Quitar/ })
+      .click();
+    await expect(page.getByRole("list").filter({ hasText: "E2E almuerzo" })).toHaveCount(0);
+    expect(await horasPublicas()).toEqual(antes);
     await publico.close();
   });
 

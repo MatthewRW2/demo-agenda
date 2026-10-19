@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AgendaDia } from "@/components/admin/AgendaDia";
 import { AgendaSemana } from "@/components/admin/AgendaSemana";
 import { DetalleCita } from "@/components/admin/DetalleCita";
+import { BotonRestablecerDemo } from "@/components/admin/BotonRestablecerDemo";
 import { FormBloqueo, ListaBloqueos } from "@/components/admin/FormBloqueo";
 import { FormCitaManual } from "@/components/admin/FormCitaManual";
 import { NavAdmin } from "@/components/admin/NavAdmin";
@@ -126,6 +127,8 @@ export default async function PaginaAdmin({ params, searchParams }: PageProps<"/
             fechaInicial={vista === "dia" ? fecha : hoy}
           />
         </div>
+
+        {tenant.demo && <BotonRestablecerDemo slug={slug} />}
       </main>
     </>
   );

@@ -248,3 +248,45 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   flujo público, recordatorio con WhatsApp interceptado, métricas con cifras exactas).
 - Hallazgo al probar: una mutación mostró que el "override" de reglas del panel no estaba cubierto (con una
   anticipación grande del negocio, la agenda interna quedaba bloqueada); se añadió la prueba.
+
+## Fase 8
+
+- **Franja de demo**: `<FranjaDemo>` en el layout de `/[slug]`, solo si `"demo": true`; aparece en el sitio, la
+  reserva, la cita y el panel. Es una línea oscura y pequeña, para no distraer.
+- **`npm run seed -- <slug>` reemplaza TODAS las citas y bloqueos del negocio** por unos 60 de ejemplo. Como es
+  destructivo, `sembrarDemo` **se niega con un negocio `"demo": false`** antes de tocar la base; lo mismo el
+  script, el botón y el cron (que además lo salta). Probado con mutaciones: si se quita la guarda, o el
+  borrado deja de filtrar por negocio, fallan las pruebas.
+- **No es atómico**: el driver HTTP de Neon no admite transacciones, así que es borrar y luego insertar. Si
+  fallara el insert, el negocio queda vacío hasta la siguiente restauración (diaria o por botón). Dos
+  restauraciones simultáneas pueden hacer que una inserción sea rechazada por la restricción anti-traslape;
+  el resultado sigue siendo coherente.
+- **Datos generados** (`server/demo/datos.ts`, función pura y reproducible): 28 días, desde 14 atrás hasta 13
+  adelante (el límite que alcanza la web). Cumple horario del local, rejilla, duración de cada servicio,
+  profesionales que hacen cada servicio, sin traslapes entre citas activas (como exige la base de datos) y sin
+  citas sobre bloqueos. Lo pasado: ~80 % completadas, ~10 % no asistió, ~10 % canceladas; lo futuro: ~93 %
+  confirmadas. Más peso a viernes, sábados y hoy. Una cancelada libera su hueco y otra cita puede ocuparlo.
+- **Hoy y mañana nunca quedan vacíos** (si el local abre): se crean primero 6 citas hoy y 5 confirmadas mañana
+  (así "Recordatorios" tiene qué mostrar). Hallazgo al revisar la pantalla: sin esto, hoy podía salir con una
+  sola cita.
+- **Clientes ficticios**: 36 nombres colombianos (nombre + apellido) que repiten, como clientes frecuentes;
+  correos `@correo.example` (dominio reservado, no existe); algunas citas "del panel" sin celular y con notas.
+- **Celulares `300 0000 xxx`**: aspecto inequívocamente ficticio, pero **no se puede garantizar que no
+  pertenezcan a alguien**. El botón de recordatorio solo abre WhatsApp con el mensaje escrito; no envía nada
+  hasta que la persona pulsa "enviar" allí.
+- **Los tokens de gestión de las citas de demo son aleatorios** (no derivados de la semilla): no se pueden
+  adivinar leyendo el código. La semilla del azar es `slug + fecha`, así que el resultado es estable durante un
+  día y cambia al siguiente.
+- **Restablecer demo en el panel** (solo si `"demo": true`), con confirmación explícita ("¿Continuar?").
+- **Cron** `GET /api/cron/restablecer-demo` + `vercel.json` (`0 9 * * *` = 04:00 en Bogotá, antes de que abra la
+  demo). Exige `Authorization: Bearer <CRON_SECRET>` (comparación en tiempo constante); sin secreto
+  configurado responde 401 siempre; solo acepta GET. En el plan Hobby de Vercel los crons corren una vez al día
+  y pueden retrasarse dentro de la hora, lo que basta aquí.
+- **Pruebas**: 17 unitarias del generador (35 combinaciones de día y hora, 3 negocios distintos, reproducible,
+  respeta cantidad, hoy y mañana con citas) y de `sembrarDemo` contra Postgres real; 7 de Playwright (franja,
+  cron con y sin secreto, POST rechazado, botón con confirmación, panel con datos). Verificado con mutaciones
+  (traslapes, bloqueos, estados, horario de apertura y cierre, negocio real, borrado de otros negocios, cron
+  sin autenticación).
+- **Las pruebas e2e dejan la demo sembrada**: el test del cron vuelve a sembrar `don-carlos`. Los tests de
+  reserva, gestión y bloqueos se hicieron robustos ante horas ocupadas por la demo (comparan antes y después en
+  vez de suponer una hora libre).
