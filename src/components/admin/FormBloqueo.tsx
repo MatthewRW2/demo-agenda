@@ -53,7 +53,7 @@ export function FormBloqueo({ slug, profesionales, fechaInicial }: FormProps) {
   }
 
   return (
-    <details className="rounded-xl border-2 border-neutral-200 p-4">
+    <details className="border-linea rounded-xl border-2 p-4">
       <summary className="min-h-12 cursor-pointer py-3 font-bold">Bloquear un horario</summary>
       <form
         noValidate
@@ -193,14 +193,14 @@ export function ListaBloqueos({ slug, bloqueos }: { slug: string; bloqueos: Bloq
       <h2 id="bloqueos-dia" className="mb-2 font-bold">
         Horarios bloqueados
       </h2>
-      <ul className="divide-y divide-neutral-200 rounded-xl border border-neutral-200">
+      <ul className="divide-linea border-linea divide-y rounded-xl border">
         {bloqueos.map((b) => (
           <li key={b.id} className="flex items-center justify-between gap-3 p-3">
             <span>
               <span className="block font-semibold">
                 {b.quien} · {b.rango}
               </span>
-              {b.motivo && <span className="block text-sm text-neutral-600">{b.motivo}</span>}
+              {b.motivo && <span className="text-tinta-suave block text-sm">{b.motivo}</span>}
             </span>
             <button
               type="button"

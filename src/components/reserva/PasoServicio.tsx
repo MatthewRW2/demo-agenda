@@ -14,12 +14,12 @@ export function PasoServicio({ tenant, onElegir }: Props) {
         <li key={s.id}>
           <button type="button" onClick={() => onElegir(s.id)} className={CLASE_OPCION}>
             <span>
-              <span className="block font-semibold">{s.nombre}</span>
-              <span className="block text-sm text-neutral-600">
+              <span className="text-tinta block text-lg font-semibold">{s.nombre}</span>
+              <span className="text-tinta-suave cifras block text-sm">
                 {formatearDuracion(s.duracionMin)}
               </span>
             </span>
-            <span className="text-primario shrink-0 text-lg font-bold">
+            <span className="numero-grande text-primario-texto shrink-0 text-xl">
               {formatearCOP(s.precio)}
             </span>
           </button>

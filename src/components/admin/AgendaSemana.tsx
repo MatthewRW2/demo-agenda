@@ -28,28 +28,28 @@ export function AgendaSemana({ tenant, lunes, reservas }: Props) {
         const delDia = porDia.get(fecha) ?? [];
         const activas = delDia.filter((r) => r.status !== "cancelada");
         return (
-          <li key={fecha} className="rounded-xl border border-neutral-200">
-            <h2 className="flex items-center justify-between gap-2 border-b border-neutral-200 bg-neutral-50 p-3 font-bold">
+          <li key={fecha} className="border-linea rounded-xl border">
+            <h2 className="border-linea bg-papel flex items-center justify-between gap-2 border-b p-3 font-bold">
               <Link
                 href={`/${tenant.slug}/admin?vista=dia&fecha=${fecha}`}
-                className="text-primario underline underline-offset-4"
+                className="text-primario-texto underline underline-offset-4"
               >
                 {formatearFechaLarga(fecha)}
               </Link>
-              <span className="text-sm font-normal text-neutral-700">
+              <span className="text-tinta-suave text-sm font-normal">
                 {activas.length} cita{activas.length === 1 ? "" : "s"}
               </span>
             </h2>
             {delDia.length === 0 ? (
-              <p className="p-3 text-sm text-neutral-600">Sin citas.</p>
+              <p className="text-tinta-suave p-3 text-sm">Sin citas.</p>
             ) : (
-              <ul className="divide-y divide-neutral-100">
+              <ul className="divide-linea divide-y">
                 {delDia.map((r) => (
                   <li key={r.id}>
                     <Link
                       href={`/${tenant.slug}/admin?vista=dia&fecha=${fecha}&cita=${r.id}`}
                       className={`flex items-center justify-between gap-3 p-3 ${
-                        r.status === "cancelada" ? "text-neutral-500 line-through" : ""
+                        r.status === "cancelada" ? "text-tinta-suave line-through" : ""
                       }`}
                     >
                       <span>
@@ -61,7 +61,7 @@ export function AgendaSemana({ tenant, lunes, reservas }: Props) {
                           {nombreProfesional.get(r.professionalId) ?? r.professionalId}
                         </span>
                       </span>
-                      <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-1 text-xs font-semibold text-neutral-800 no-underline">
+                      <span className="bg-papel-2 text-tinta shrink-0 rounded-full px-2 py-1 text-xs font-semibold no-underline">
                         {ETIQUETA_ESTADO[r.status]}
                       </span>
                     </Link>

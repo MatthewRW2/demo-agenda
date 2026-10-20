@@ -25,7 +25,7 @@ interface Props {
 type Modo = "menu" | "cancelar" | "reprogramar";
 
 const BOTON_BORDE =
-  "inline-flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-primario px-5 font-semibold text-primario";
+  "inline-flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-primario-texto px-5 font-semibold text-primario-texto";
 
 export function GestionCita({
   slug,
@@ -125,8 +125,8 @@ export function GestionCita({
 
   if (modo === "menu") {
     return (
-      <div className="flex flex-col gap-3 border-t border-neutral-200 pt-6">
-        <h2 className="font-semibold">¿Cambió algo?</h2>
+      <div className="border-linea flex flex-col gap-3 border-t-2 border-dashed pt-6">
+        <h2 className="font-display text-tinta text-xl font-bold">¿Cambió algo?</h2>
         <button type="button" onClick={() => abrir("reprogramar")} className={BOTON_BORDE}>
           Cambiar día u hora
         </button>
@@ -151,7 +151,7 @@ export function GestionCita({
           id="titulo-cancelar"
           ref={titulo}
           tabIndex={-1}
-          className="text-lg font-bold outline-none"
+          className="font-display text-tinta text-xl font-bold outline-none"
         >
           ¿Seguro que quieres cancelar?
         </h2>
@@ -183,12 +183,17 @@ export function GestionCita({
   return (
     <section
       aria-labelledby="titulo-cambiar"
-      className="rounded-xl border-2 border-neutral-200 p-5"
+      className="border-linea rounded-2xl border-2 bg-white p-5"
     >
-      <h2 id="titulo-cambiar" ref={titulo} tabIndex={-1} className="text-lg font-bold outline-none">
+      <h2
+        id="titulo-cambiar"
+        ref={titulo}
+        tabIndex={-1}
+        className="font-display text-tinta text-xl font-bold outline-none"
+      >
         Elige el nuevo día y hora
       </h2>
-      <p className="mt-1 mb-4 text-neutral-700">
+      <p className="text-tinta-suave mt-1 mb-4">
         Con {nombreProfesional} · ahora: {inicioActual}
       </p>
 
@@ -197,6 +202,7 @@ export function GestionCita({
         fecha={fecha}
         horarios={horarios}
         onElegirFecha={elegirFecha}
+        horaElegida={hora}
         onElegirHora={(h) => {
           setHora(h);
           setError(null);
@@ -214,7 +220,7 @@ export function GestionCita({
       )}
 
       {fecha && hora && (
-        <div className="mt-5 rounded-xl bg-neutral-100 p-4" role="status">
+        <div className="bg-papel-2 mt-5 rounded-xl p-4" role="status">
           <p className="mb-3">
             Mover a{" "}
             <strong>

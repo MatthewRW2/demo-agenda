@@ -5,11 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { obtenerHorariosAccion, reservarAccion } from "@/app/[slug]/reservar/acciones";
 import { enlaceWhatsApp } from "@/lib/enlaces";
+import type { Preseleccion } from "@/lib/preseleccion";
 import { erroresPorCampo, reservaSchema } from "@/lib/validacion";
+import { CabeceraSimple } from "@/components/negocio/CabeceraSimple";
 import { PasoDatos } from "./PasoDatos";
 import { PasoFechaHora } from "./PasoFechaHora";
 import { PasoProfesional } from "./PasoProfesional";
 import { PasoServicio } from "./PasoServicio";
+import { Progreso } from "./Progreso";
+import { BarraResumen, ResumenCita } from "./ResumenCita";
 import {
   PASOS,
   type DatosFormulario,
@@ -22,16 +26,34 @@ interface Props {
   tenant: TenantPublico;
   /** Fechas reservables (YYYY-MM-DD) en que el local abre. */
   dias: string[];
+  /** Elecciones que ya trae el enlace (ya validadas en el servidor). */
+  inicial?: Preseleccion;
 }
 
-export function FlujoReserva({ tenant, dias }: Props) {
+/** Al enviar con errores, el foco va al primer campo marcado (en el orden del formulario). */
+function enfocarPrimerError(errores: Record<string, string>) {
+  const primero = ["nombre", "celular", "correo"].find((c) => errores[c]);
+  if (primero) document.getElementById(primero)?.focus();
+}
+
+function pasoInicial(p: Preseleccion): Paso {
+  if (p.servicioId && p.profesionalId) return "fechaHora";
+  if (p.servicioId) return "profesional";
+  return "servicio";
+}
+
+export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
   const router = useRouter();
-  const [paso, setPaso] = useState<Paso>("servicio");
-  const [servicioId, setServicioId] = useState<string | null>(null);
-  const [profesionalId, setProfesionalId] = useState<string | null>(null);
-  const [fecha, setFecha] = useState<string | null>(null);
+  const [paso, setPaso] = useState<Paso>(() => pasoInicial(inicial));
+  const [servicioId, setServicioId] = useState<string | null>(inicial.servicioId ?? null);
+  const [profesionalId, setProfesionalId] = useState<string | null>(inicial.profesionalId ?? null);
+  const [fecha, setFecha] = useState<string | null>(inicial.fecha ?? null);
   const [hora, setHora] = useState<string | null>(null);
-  const [horarios, setHorarios] = useState<EstadoHorarios>({ estado: "inicial" });
+  // El enlace "Reservar con X" fija al profesional: solo se escoge el servicio, entre los suyos.
+  const [profesionalFijo] = useState(() => !inicial.servicioId && !!inicial.profesionalId);
+  const [horarios, setHorarios] = useState<EstadoHorarios>(
+    inicial.fecha ? { estado: "cargando" } : { estado: "inicial" },
+  );
   const [datos, setDatos] = useState<DatosFormulario>({ nombre: "", celular: "", correo: "" });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
@@ -52,7 +74,10 @@ export function FlujoReserva({ tenant, dias }: Props) {
     window.scrollTo({ top: 0 });
   }, [paso]);
 
-  const numeroPaso = PASOS.indexOf(paso) + 1;
+  // Con "Reservar con X" el paso del profesional no existe: el cliente ya lo escogió.
+  const pasosVisibles = profesionalFijo ? PASOS.filter((p) => p !== "profesional") : PASOS;
+  const numeroPaso = pasosVisibles.indexOf(paso) + 1;
+  const resumen = { tenant, servicioId, profesionalId, fecha, hora };
   const textos = tenant.textos;
   const TITULOS: Record<Paso, string> = {
     servicio: "¿Qué servicio quieres?",
@@ -61,7 +86,12 @@ export function FlujoReserva({ tenant, dias }: Props) {
     datos: "Tus datos",
   };
 
-  async function cargarHorarios(f: string, servicio: string, profesional: string) {
+  async function cargarHorarios(
+    f: string,
+    servicio: string,
+    profesional: string,
+    horaDeseada?: string,
+  ) {
     const esta = ++peticion.current;
     setHorarios({ estado: "cargando" });
     const r = await obtenerHorariosAccion(tenant.slug, {
@@ -70,20 +100,39 @@ export function FlujoReserva({ tenant, dias }: Props) {
       fecha: f,
     });
     if (esta !== peticion.current) return; // llegó tarde: el cliente ya cambió de día
-    setHorarios(
-      r.ok
-        ? { estado: "listo", horas: r.horarios.map((h) => h.hora) }
-        : { estado: "error", mensaje: r.mensaje },
-    );
+    if (!r.ok) {
+      setHorarios({ estado: "error", mensaje: r.mensaje });
+      return;
+    }
+    const horas = r.horarios.map((h) => h.hora);
+    setHorarios({ estado: "listo", horas });
+    // Si el enlace traía una hora y sigue libre, va directo a los datos; si ya no, elige otra.
+    if (horaDeseada && horas.includes(horaDeseada)) {
+      setHora(horaDeseada);
+      setPaso("datos");
+    }
   }
+
+  // Un enlace con día elegido trae sus horas al abrir. Solo al montar: después manda el cliente.
+  useEffect(() => {
+    if (inicial.servicioId && inicial.profesionalId && inicial.fecha) {
+      void cargarHorarios(inicial.fecha, inicial.servicioId, inicial.profesionalId, inicial.hora);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function elegirServicio(id: string) {
     setServicioId(id);
-    setProfesionalId(null);
     setFecha(null);
     setHora(null);
     setHorarios({ estado: "inicial" });
-    setPaso("profesional");
+    // Si el cliente ya escogió con quién ("Reservar con X"), se salta ese paso.
+    if (profesionalFijo) {
+      setPaso("fechaHora");
+    } else {
+      setProfesionalId(null);
+      setPaso("profesional");
+    }
   }
 
   function elegirProfesional(id: string) {
@@ -109,7 +158,7 @@ export function FlujoReserva({ tenant, dias }: Props) {
   }
 
   function atras() {
-    const anterior = PASOS[PASOS.indexOf(paso) - 1];
+    const anterior = pasosVisibles[pasosVisibles.indexOf(paso) - 1];
     if (anterior) setPaso(anterior);
   }
 
@@ -129,8 +178,10 @@ export function FlujoReserva({ tenant, dias }: Props) {
 
     const local = reservaSchema.safeParse(entrada);
     if (!local.success) {
-      setErrores(erroresPorCampo(local.error));
+      const porCampo = erroresPorCampo(local.error);
+      setErrores(porCampo);
       setErrorGeneral("Revisa los datos marcados.");
+      enfocarPrimerError(porCampo);
       return;
     }
 
@@ -152,6 +203,7 @@ export function FlujoReserva({ tenant, dias }: Props) {
       } else {
         setErrores(r.errores ?? {});
         setErrorGeneral(r.mensaje);
+        enfocarPrimerError(r.errores ?? {});
       }
     } catch {
       setErrorGeneral("No pudimos completar tu reserva. Revisa tu conexión e inténtalo de nuevo.");
@@ -161,9 +213,12 @@ export function FlujoReserva({ tenant, dias }: Props) {
 
   if (dias.length === 0) {
     return (
-      <div className="mx-auto w-full max-w-lg px-4 py-10 text-center">
-        <h1 className="mb-3 text-2xl font-bold">Por ahora no hay días para reservar</h1>
-        <p className="mb-6 text-neutral-700">
+      <div
+        id="contenido"
+        className="bg-papel mx-auto w-full max-w-lg flex-1 px-4 py-12 text-center"
+      >
+        <h1 className="titulo-seccion text-tinta mb-3">Por ahora no hay días para reservar</h1>
+        <p className="text-tinta-suave mb-6 text-base">
           No tenemos días disponibles en este momento. Escríbenos por WhatsApp y te ayudamos a
           conseguir tu {tenant.textos.reserva}.
         </p>
@@ -178,7 +233,7 @@ export function FlujoReserva({ tenant, dias }: Props) {
         <p className="mt-4">
           <Link
             href={`/${tenant.slug}`}
-            className="text-primario font-semibold underline underline-offset-4"
+            className="text-primario-texto inline-flex min-h-12 items-center font-semibold underline underline-offset-4"
           >
             Volver
           </Link>
@@ -188,94 +243,107 @@ export function FlujoReserva({ tenant, dias }: Props) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-lg px-4 py-6">
-      <nav aria-label="Progreso" className="mb-6">
-        <div className="mb-2 flex items-center justify-between text-sm text-neutral-700">
-          {numeroPaso > 1 ? (
-            <button
-              type="button"
-              onClick={atras}
-              className="min-h-12 pr-4 font-semibold underline underline-offset-4"
+    <div className="bg-papel flex-1">
+      <CabeceraSimple slug={tenant.slug} nombre={tenant.nombre} logo={tenant.logo}>
+        {numeroPaso > 1 ? (
+          <button
+            type="button"
+            onClick={atras}
+            className="text-primario-texto min-h-12 shrink-0 font-semibold underline underline-offset-4"
+          >
+            ← Atrás
+          </button>
+        ) : (
+          <Link
+            href={`/${tenant.slug}`}
+            className="text-primario-texto inline-flex min-h-12 shrink-0 items-center font-semibold underline underline-offset-4"
+          >
+            ← Volver
+          </Link>
+        )}
+      </CabeceraSimple>
+
+      <div
+        id="contenido"
+        className="mx-auto grid w-full max-w-5xl gap-x-12 px-4 pt-6 pb-32 lg:grid-cols-[minmax(0,1fr)_21rem] lg:pt-10 lg:pb-16"
+      >
+        <div className="min-w-0">
+          <Progreso pasos={pasosVisibles} actual={paso} onIr={setPaso} />
+
+          <h1
+            ref={titulo}
+            tabIndex={-1}
+            className="titulo-seccion text-tinta mt-8 mb-6 outline-none"
+          >
+            {TITULOS[paso]}
+          </h1>
+
+          {aviso && paso === "fechaHora" && (
+            <p
+              className="mb-4 rounded-xl border border-amber-400 bg-amber-50 p-4 text-amber-950"
+              role="alert"
             >
-              ← Atrás
-            </button>
-          ) : (
-            <Link
-              href={`/${tenant.slug}`}
-              className="inline-flex min-h-12 items-center pr-4 font-semibold underline underline-offset-4"
-            >
-              ← Volver
-            </Link>
+              {aviso}
+            </p>
           )}
-          <span>
-            Paso {numeroPaso} de {PASOS.length}
-          </span>
+
+          {paso === "servicio" && (
+            <PasoServicio
+              tenant={{
+                ...tenant,
+                servicios: profesionalFijo
+                  ? tenant.servicios.filter((s) =>
+                      tenant.profesionales
+                        .find((p) => p.id === profesionalId)
+                        ?.servicios.includes(s.id),
+                    )
+                  : tenant.servicios,
+              }}
+              onElegir={elegirServicio}
+            />
+          )}
+
+          {paso === "profesional" && servicioId && (
+            <PasoProfesional tenant={tenant} servicioId={servicioId} onElegir={elegirProfesional} />
+          )}
+
+          {paso === "fechaHora" && (
+            <PasoFechaHora
+              dias={dias}
+              fecha={fecha}
+              horarios={horarios}
+              onElegirFecha={elegirFecha}
+              onElegirHora={elegirHora}
+              onReintentar={() =>
+                fecha &&
+                servicioId &&
+                profesionalId &&
+                void cargarHorarios(fecha, servicioId, profesionalId)
+              }
+            />
+          )}
+
+          {paso === "datos" && servicioId && profesionalId && fecha && hora && (
+            <PasoDatos
+              tenant={tenant}
+              datos={datos}
+              errores={errores}
+              errorGeneral={errorGeneral}
+              enviando={enviando}
+              onCambio={cambiarDato}
+              onEnviar={enviar}
+            />
+          )}
         </div>
-        <div
-          role="progressbar"
-          aria-valuemin={1}
-          aria-valuemax={PASOS.length}
-          aria-valuenow={numeroPaso}
-          aria-label={`Paso ${numeroPaso} de ${PASOS.length}`}
-          className="h-2 overflow-hidden rounded-full bg-neutral-200"
-        >
-          <div
-            className="bg-primario h-full transition-all"
-            style={{ width: `${(numeroPaso / PASOS.length) * 100}%` }}
-          />
+
+        <div className="hidden lg:block">
+          <div className="sticky top-6 mt-[4.25rem]">
+            <ResumenCita {...resumen} />
+          </div>
         </div>
-      </nav>
+      </div>
 
-      <h1 ref={titulo} tabIndex={-1} className="mb-5 text-2xl font-bold outline-none">
-        {TITULOS[paso]}
-      </h1>
-
-      {aviso && paso === "fechaHora" && (
-        <p
-          className="mb-4 rounded-xl border border-amber-400 bg-amber-50 p-4 text-amber-950"
-          role="alert"
-        >
-          {aviso}
-        </p>
-      )}
-
-      {paso === "servicio" && <PasoServicio tenant={tenant} onElegir={elegirServicio} />}
-
-      {paso === "profesional" && servicioId && (
-        <PasoProfesional tenant={tenant} servicioId={servicioId} onElegir={elegirProfesional} />
-      )}
-
-      {paso === "fechaHora" && (
-        <PasoFechaHora
-          dias={dias}
-          fecha={fecha}
-          horarios={horarios}
-          onElegirFecha={elegirFecha}
-          onElegirHora={elegirHora}
-          onReintentar={() =>
-            fecha &&
-            servicioId &&
-            profesionalId &&
-            void cargarHorarios(fecha, servicioId, profesionalId)
-          }
-        />
-      )}
-
-      {paso === "datos" && servicioId && profesionalId && fecha && hora && (
-        <PasoDatos
-          tenant={tenant}
-          servicioId={servicioId}
-          profesionalId={profesionalId}
-          fecha={fecha}
-          hora={hora}
-          datos={datos}
-          errores={errores}
-          errorGeneral={errorGeneral}
-          enviando={enviando}
-          onCambio={cambiarDato}
-          onEnviar={enviar}
-        />
-      )}
+      <BarraResumen {...resumen} />
     </div>
   );
 }

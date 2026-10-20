@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: LayoutProps<"/[slug]/admin">) {
-  return <>{children}</>;
+  return <div className="bg-papel flex flex-1 flex-col">{children}</div>;
 }

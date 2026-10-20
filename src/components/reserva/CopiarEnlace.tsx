@@ -22,11 +22,11 @@ export function CopiarEnlace() {
       <button
         type="button"
         onClick={copiar}
-        className="border-primario text-primario min-h-12 w-full rounded-xl border-2 px-5 font-semibold"
+        className="border-primario-texto text-primario-texto min-h-12 w-full rounded-xl border-2 px-5 font-semibold"
       >
         Copiar enlace de mi cita
       </button>
-      <p role="status" className="mt-2 min-h-6 text-sm text-neutral-700">
+      <p role="status" className="text-tinta-suave mt-2 min-h-6 text-sm">
         {estado === "copiado" && "¡Enlace copiado!"}
         {estado === "fallo" && "No pudimos copiarlo. Mantén presionada la dirección de la página."}
       </p>

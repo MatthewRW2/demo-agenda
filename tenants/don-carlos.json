@@ -3,6 +3,7 @@
   "nombre": "Barbería Don Carlos",
   "eslogan": "Cortes clásicos y modernos en Chapinero",
   "logo": "/tenants/don-carlos/logo.svg",
+  "imagenPortada": "/tenants/don-carlos/portada.jpg",
   "colores": { "primario": "#1F2937", "acento": "#C8A24A" },
   "whatsapp": "573001234567",
   "direccion": "Cra. 13 #54-20, Chapinero, Bogotá",
@@ -29,19 +30,19 @@
     {
       "id": "carlos",
       "nombre": "Carlos",
-      "foto": "/tenants/don-carlos/carlos.svg",
+      "foto": "/tenants/don-carlos/carlos.jpg",
       "servicios": ["corte", "corte-barba", "barba"]
     },
     {
       "id": "andres",
       "nombre": "Andrés",
-      "foto": "/tenants/don-carlos/andres.svg",
+      "foto": "/tenants/don-carlos/andres.jpg",
       "servicios": ["corte", "corte-barba", "barba", "nino"]
     },
     {
       "id": "mateo",
       "nombre": "Mateo",
-      "foto": "/tenants/don-carlos/mateo.svg",
+      "foto": "/tenants/don-carlos/mateo.jpg",
       "servicios": ["corte", "nino"]
     }
   ],

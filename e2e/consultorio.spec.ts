@@ -42,9 +42,14 @@ test("la página usa su propia marca y habla de odontólogos, no de barberos", a
     .evaluate((e) => getComputedStyle(e).backgroundColor);
   expect(fondo).toBe("rgb(15, 76, 92)");
 
-  // Avatares con las iniciales sin el título: "Dra. Laura Mejía" -> "LM"
+  // Cada profesional lleva su foto (carga de verdad) y su indicador de turnos de hoy
   const equipo = page.getByRole("listitem").filter({ hasText: "Dra. Laura Mejía" });
-  await expect(equipo).toContainText("LM");
+  const foto = equipo.locator("img").first();
+  await expect(foto).toHaveAttribute("src", /dra-mejia/);
+  await expect
+    .poll(() => foto.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0))
+    .toBe(true);
+  await expect(equipo).toContainText(/Turnos hoy|Sin turnos hoy/);
 
   // Franja de demo y metadatos propios
   await expect(page.getByRole("complementary", { name: "Aviso de demostración" })).toBeVisible();

@@ -1,4 +1,3 @@
-import { contraste } from "../color";
 import { DIAS, type Tenant } from "./schema";
 
 /**
@@ -41,15 +40,6 @@ export function advertenciasDeTenant(tenant: Tenant): string[] {
     avisos.push(
       `textos.reserva ("${tenant.textos.reserva}") suena masculino y los mensajes de la app están en femenino ` +
         '("tu cita quedó confirmada"); prefiere cita, consulta, sesión o reserva.',
-    );
-  }
-
-  // --- legibilidad: el color primario se usa como texto sobre fondo blanco (precios, enlaces) ---
-  const ratio = contraste(tenant.colores.primario, "#ffffff");
-  if (ratio < 4.5) {
-    avisos.push(
-      `colores.primario (${tenant.colores.primario}): contraste de ${ratio.toFixed(1)}:1 sobre blanco; ` +
-        "el mínimo recomendado es 4,5:1 (precios y enlaces se leerán mal). Usa un tono más oscuro.",
     );
   }
 

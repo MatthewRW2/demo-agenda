@@ -11,7 +11,10 @@ export default function ErrorEnNegocio({ error, retry }: { error: unknown; retry
   }, [error]);
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+    <main
+      id="contenido"
+      className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center"
+    >
       <h1 className="text-2xl font-bold">Algo no salió como esperábamos</h1>
       <p className="text-neutral-700">
         No pudimos cargar esta pantalla. Suele ser algo pasajero: inténtalo de nuevo en unos

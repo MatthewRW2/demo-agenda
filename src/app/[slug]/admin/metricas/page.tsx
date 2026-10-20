@@ -16,14 +16,14 @@ import { reservasEnRango } from "@/server/admin/operaciones";
 export const dynamic = "force-dynamic";
 
 const ENLACE =
-  "inline-flex min-h-12 items-center rounded-xl border-2 border-primario px-4 font-semibold text-primario";
+  "inline-flex min-h-12 items-center rounded-xl border-2 border-primario-texto px-4 font-semibold text-primario-texto";
 
 function Tarjeta({ titulo, valor, detalle }: { titulo: string; valor: string; detalle?: string }) {
   return (
-    <div className="rounded-xl border border-neutral-200 p-4">
-      <dt className="text-sm text-neutral-700">{titulo}</dt>
+    <div className="border-linea rounded-xl border p-4">
+      <dt className="text-tinta-suave text-sm">{titulo}</dt>
       <dd className="mt-1 text-2xl font-bold">{valor}</dd>
-      {detalle && <dd className="mt-1 text-sm text-neutral-700">{detalle}</dd>}
+      {detalle && <dd className="text-tinta-suave mt-1 text-sm">{detalle}</dd>}
     </div>
   );
 }
@@ -57,10 +57,13 @@ export default async function PaginaMetricas({
   return (
     <>
       <NavAdmin slug={slug} nombre={tenant.nombre} activa="metricas" />
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6">
+      <main
+        id="contenido"
+        className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6"
+      >
         <div>
-          <h1 className="text-2xl font-bold">Métricas de la semana</h1>
-          <p className="text-neutral-700">
+          <h1 className="titulo-seccion text-tinta">Métricas de la semana</h1>
+          <p className="text-tinta-suave">
             Del {formatearFechaLarga(lunes)} al {formatearFechaLarga(domingo)}
           </p>
         </div>

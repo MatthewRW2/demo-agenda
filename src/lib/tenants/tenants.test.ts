@@ -147,6 +147,32 @@ describe("validación: dice exactamente qué campo falla", () => {
   });
 });
 
+describe("campos opcionales del rediseño", () => {
+  const base = () => leerReal("don-carlos.json");
+
+  it("un negocio sin imagenPortada, foto ni reseñas sigue siendo válido", () => {
+    const t = base();
+    delete t.imagenPortada;
+    delete t.resenas;
+    for (const p of t.profesionales) delete p.foto;
+    expect(detalles(t)).toEqual([]);
+  });
+
+  it("imagenPortada debe ser una ruta dentro de public/", () => {
+    const t = base();
+    t.imagenPortada = "portada.jpg";
+    expect(detalles(t)).toEqual([expect.stringContaining("imagenPortada:")]);
+  });
+
+  it("una reseña sin estrellas toma 5 y una con 9 se rechaza", () => {
+    const t = base();
+    t.resenas = [{ autor: "Ana", texto: "Muy buen servicio" }];
+    expect(detalles(t)).toEqual([]);
+    t.resenas = [{ autor: "Ana", texto: "Muy buen servicio", estrellas: 9 }];
+    expect(detalles(t)).toEqual([expect.stringContaining("resenas[0].estrellas:")]);
+  });
+});
+
 describe("cargarTenant", () => {
   let dir: string;
   beforeEach(() => {

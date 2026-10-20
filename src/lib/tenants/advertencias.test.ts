@@ -32,18 +32,13 @@ describe("advertenciasDeTenant", () => {
     }
   });
 
-  it("avisa de un color primario con poco contraste sobre blanco, no de uno oscuro", () => {
-    const claro: Tenant = {
-      ...tenantDePrueba,
-      colores: { primario: "#f5c518", acento: "#111111" },
-    };
-    const [aviso] = advertenciasDeTenant(claro);
-    expect(aviso).toMatch(/colores\.primario \(#f5c518\): contraste de 1\.\d:1 sobre blanco/);
-    const oscuro: Tenant = {
-      ...tenantDePrueba,
-      colores: { primario: "#0f4c5c", acento: "#f4b860" },
-    };
-    expect(advertenciasDeTenant(oscuro)).toEqual([]);
+  it("no avisa por colores: la paleta se deriva sola y funciona con cualquier par", () => {
+    for (const colores of [
+      { primario: "#f5c518", acento: "#111111" },
+      { primario: "#0f4c5c", acento: "#f4b860" },
+    ]) {
+      expect(advertenciasDeTenant({ ...tenantDePrueba, colores })).toEqual([]);
+    }
   });
 
   it("avisa de un servicio que no cabe en ninguna jornada", () => {

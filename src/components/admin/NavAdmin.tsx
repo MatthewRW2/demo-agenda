@@ -21,7 +21,7 @@ export function NavAdmin({
   return (
     <header className="bg-primario text-sobre-primario">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 pt-3">
-        <p className="font-bold">{nombre}</p>
+        <p className="font-display text-lg font-bold">{nombre}</p>
         <div className="flex items-center">
           <Link
             href={`/${slug}`}
@@ -42,7 +42,7 @@ export function NavAdmin({
             href={`/${slug}/admin${s.ruta}`}
             aria-current={s.id === activa ? "page" : undefined}
             className={`min-h-12 shrink-0 rounded-t-xl px-4 py-3 font-semibold ${
-              s.id === activa ? "bg-white text-neutral-900" : "opacity-90"
+              s.id === activa ? "bg-papel text-tinta" : "opacity-90"
             }`}
           >
             {s.etiqueta}

@@ -55,8 +55,10 @@ Notas:
 | `slug` | Lo eliges | Minúsculas, números y guiones (`clinica-sonrisa`). Es la dirección. Debe coincidir con el nombre del archivo. No uses `api` |
 | `nombre`, `eslogan` | Su Instagram o ficha de Google | Una frase corta de eslogan |
 | `logo` | Su foto de perfil de Instagram o su logo | Ruta dentro de `public/` (`/tenants/<slug>/logo.png`). SVG, PNG o JPG. Si no tienes uno, se queda el provisional con iniciales |
-| `colores.primario` | Un color oscuro de su logo | **Oscuro**: se usa como texto sobre blanco (precios, enlaces). `validar-tenants` avisa si se leería mal |
+| `imagenPortada` | Opcional. Una foto del local (Unsplash o Pexels, o la suya) | Ruta dentro de `public/` (`/tenants/<slug>/portada.jpg`), horizontal, ~1920×1280, idealmente bajo 250 KB. Sin ella la portada es un campo liso del color primario con el logo grande. Anota el crédito en `docs/creditos-imagenes.md` |
+| `colores.primario` | Un color de su logo | Cualquiera: la portada y las capas se tiñen con él, y el texto, los bordes y los fondos suaves se derivan solos con contraste garantizado (también con colores claros) |
 | `colores.acento` | Otro color de su logo | Fondo de los botones; el color del texto encima se elige solo para que contraste |
+| `resenas` | Opcional. Reseñas reales de sus clientes | Hasta 6, cada una con `autor`, `texto`, `estrellas` (1–5, por defecto 5) y `fuente` opcional. Sin reseñas: en una demo (`"demo": true`) salen tres de ejemplo rotuladas como inventadas; en un negocio real la sección no aparece |
 | `whatsapp` | Su ficha de Google o su Instagram | `57` + 10 dígitos, sin `+` ni espacios: `573102345678` |
 | `direccion` | Su ficha de Google | Se usa también para el mapa |
 | `instagram` | Su perfil | Solo el usuario, sin `@` ni URL. Bórralo si no tiene |
@@ -65,7 +67,7 @@ Notas:
 | `anticipacionMinHoras` | Cuánto aviso necesita | Aplica a reservar, cancelar y cambiar |
 | `diasReservables` | Hasta cuántos días adelante se reserva | 14 es un buen punto de partida |
 | `servicios` | Su lista de precios (Instagram, carta, ficha) | `id` en minúsculas con guiones; `duracionMin` entero; `precio` en pesos, entero (`25000`) |
-| `profesionales` | Su equipo | `servicios` = los `id` que hace cada uno. `foto` es opcional (sin foto se muestran las iniciales) |
+| `profesionales` | Su equipo | `servicios` = los `id` que hace cada uno. `foto` es opcional: retrato vertical (~800×1000, `/tenants/<slug>/<id>.jpg`); sin foto se muestra un campo del color primario con las iniciales |
 | `textos.profesional` | Cómo se llama su equipo | `barbero`, `odontólogo`, `estilista`, `terapeuta`, `doctor`… (se pluraliza solo: "Nuestros odontólogos") |
 | `textos.reserva` | Cómo llama a lo que se agenda | **Usa una palabra femenina**: `cita`, `consulta`, `sesión`, `reserva`. Los mensajes están escritos en femenino ("tu cita quedó confirmada") y `validar-tenants` avisa si pones algo como `turno` |
 | `demo` | — | `true` mientras es una demo: muestra la franja "Demo con datos ficticios", muestra la contraseña del panel y habilita sembrar y restablecer |

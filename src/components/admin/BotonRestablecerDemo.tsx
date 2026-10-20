@@ -34,12 +34,12 @@ export function BotonRestablecerDemo({ slug }: { slug: string }) {
   return (
     <section
       aria-labelledby="titulo-demo"
-      className="rounded-xl border-2 border-dashed border-neutral-400 p-4"
+      className="border-borde-control rounded-xl border-2 border-dashed p-4"
     >
       <h2 id="titulo-demo" className="font-bold">
         Demo
       </h2>
-      <p className="mb-3 text-sm text-neutral-700">
+      <p className="text-tinta-suave mb-3 text-sm">
         Esta es una demo con datos ficticios. Puedes volver a dejarla como nueva en cualquier
         momento (también se restablece sola cada día).
       </p>
