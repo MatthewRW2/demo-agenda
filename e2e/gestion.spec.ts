@@ -3,7 +3,14 @@ import { expect, test, type Page } from "@playwright/test";
 import { eq } from "drizzle-orm";
 import { getDb } from "../src/db";
 import { bookings } from "../src/db/schema";
-import { NEGOCIO, borrarReservasDePrueba, hastaDatos, listaDeHoras, llenarYEnviar } from "./ayudas";
+import {
+  NEGOCIO,
+  borrarReservasDePrueba,
+  contactoDemoDe,
+  hastaDatos,
+  listaDeHoras,
+  llenarYEnviar,
+} from "./ayudas";
 
 /** Cancelar y reprogramar una cita desde su enlace, contra la base real. */
 // Cada prueba empieza con la base limpia: no dependen unas de otras.
@@ -155,10 +162,16 @@ test("a menos de la anticipación mínima no se puede cancelar ni cambiar, y se 
   await expect(page.getByRole("button", { name: "Cancelar mi cita" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Cambiar día u hora" })).toHaveCount(0);
 
+  // En una demo, "Escríbenos" va al contacto de quien muestra la demo (contactoDemo) o no se ofrece
   const whatsapp = page.getByRole("link", { name: /Escríbenos por WhatsApp/ });
-  const href = new URL((await whatsapp.getAttribute("href"))!);
-  expect(href.origin + href.pathname).toBe("https://wa.me/573001234567");
-  expect(href.searchParams.get("text")).toContain("Código:");
+  const contacto = contactoDemoDe("don-carlos");
+  if (contacto) {
+    const href = new URL((await whatsapp.getAttribute("href"))!);
+    expect(href.origin + href.pathname).toBe(`https://wa.me/${contacto.whatsapp}`);
+  } else {
+    await expect(whatsapp).toHaveCount(0);
+  }
+  expect(await page.content()).not.toContain("573001234567");
 });
 
 test("el enlace de una cita ajena o inventada no permite gestionar nada", async ({ page }) => {

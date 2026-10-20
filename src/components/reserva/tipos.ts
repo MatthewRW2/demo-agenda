@@ -3,8 +3,11 @@ import type { Tenant } from "@/lib/tenants/schema";
 /** Lo que el navegador necesita saber del negocio para reservar (nada más viaja al cliente). */
 export type TenantPublico = Pick<
   Tenant,
-  "slug" | "nombre" | "textos" | "servicios" | "profesionales" | "whatsapp" | "logo"
->;
+  "slug" | "nombre" | "textos" | "servicios" | "profesionales" | "logo" | "demo"
+> & {
+  /** Enlace wa.me ya armado en el servidor (en una demo, a quien la muestra); sin él no hay botón. */
+  enlaceContacto?: string;
+};
 
 export type Paso = "servicio" | "profesional" | "fechaHora" | "datos";
 

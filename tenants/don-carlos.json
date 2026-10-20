@@ -7,7 +7,6 @@
   "colores": { "primario": "#1F2937", "acento": "#C8A24A" },
   "whatsapp": "573001234567",
   "direccion": "Cra. 13 #54-20, Chapinero, Bogotá",
-  "instagram": "barberiadoncarlos",
   "horario": {
     "lun": ["09:00", "19:00"],
     "mar": ["09:00", "19:00"],
@@ -47,5 +46,25 @@
     }
   ],
   "textos": { "profesional": "barbero", "reserva": "cita" },
+  "resenas": [
+    {
+      "autor": "Santiago G.",
+      "texto": "Reservé desde el celular y llegué sin esperar. Me hicieron el degradado como lo pedí y la barba quedó pareja.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    },
+    {
+      "autor": "Felipe A.",
+      "texto": "Puntuales y limpios. La silla cómoda, la toalla caliente y el corte justo a la hora de la cita.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    },
+    {
+      "autor": "Mauricio L.",
+      "texto": "Fui con mi hijo y los dos salimos bien. Buen trato y precios claros desde el principio.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    }
+  ],
   "demo": true
 }

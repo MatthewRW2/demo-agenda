@@ -31,10 +31,9 @@ test.describe.serial("reserva", () => {
       /^https:\/\/calendar\.google\.com\/calendar\/render\?/,
     );
 
-    const whatsapp = page.getByRole("link", { name: /Confirmar por WhatsApp/ });
-    const href = new URL((await whatsapp.getAttribute("href"))!);
-    expect(href.origin + href.pathname).toBe("https://wa.me/573001234567");
-    expect(href.searchParams.get("text")).toContain("E2E Prueba Uno");
+    // En una demo el número del JSON es de relleno: no se ofrece confirmar por WhatsApp ni sale en la página
+    await expect(page.getByRole("link", { name: /Confirmar por WhatsApp/ })).toHaveCount(0);
+    expect(await page.content()).not.toContain("573001234567");
 
     // El enlace de la cita se puede abrir de nuevo (y no cambia los datos)
     const enlace = new URL(page.url());

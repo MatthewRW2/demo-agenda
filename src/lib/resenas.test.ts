@@ -4,10 +4,10 @@ import { RESENAS_DE_EJEMPLO, resenasParaMostrar } from "./resenas";
 const real = [{ autor: "Camila P.", texto: "Excelente atención.", estrellas: 5, fuente: "Google" }];
 
 describe("resenasParaMostrar", () => {
-  it("las reseñas reales del JSON mandan, también en una demo", () => {
+  it("las reseñas del JSON mandan; en una demo van rotuladas como ejemplo y en un negocio real no", () => {
     expect(resenasParaMostrar({ resenas: real, demo: true })).toEqual({
       resenas: real,
-      esEjemplo: false,
+      esEjemplo: true,
     });
     expect(resenasParaMostrar({ resenas: real, demo: false })).toEqual({
       resenas: real,

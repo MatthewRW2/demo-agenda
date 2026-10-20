@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { obtenerHorariosAccion, reservarAccion } from "@/app/[slug]/reservar/acciones";
-import { enlaceWhatsApp } from "@/lib/enlaces";
 import type { Preseleccion } from "@/lib/preseleccion";
 import { erroresPorCampo, reservaSchema } from "@/lib/validacion";
 import { CabeceraSimple } from "@/components/negocio/CabeceraSimple";
@@ -219,17 +218,21 @@ export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
       >
         <h1 className="titulo-seccion text-tinta mb-3">Por ahora no hay días para reservar</h1>
         <p className="text-tinta-suave mb-6 text-base">
-          No tenemos días disponibles en este momento. Escríbenos por WhatsApp y te ayudamos a
-          conseguir tu {tenant.textos.reserva}.
+          No tenemos días disponibles en este momento.
+          {tenant.enlaceContacto
+            ? ` Escríbenos por WhatsApp y te ayudamos a conseguir tu ${tenant.textos.reserva}.`
+            : " Vuelve a intentarlo más tarde."}
         </p>
-        <a
-          href={enlaceWhatsApp(tenant.whatsapp, `Hola, quiero pedir una ${tenant.textos.reserva}.`)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-acento text-sobre-acento inline-flex min-h-14 w-full items-center justify-center rounded-xl text-lg font-bold"
-        >
-          Escribir por WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
-        </a>
+        {tenant.enlaceContacto && (
+          <a
+            href={tenant.enlaceContacto}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-acento text-sobre-acento inline-flex min-h-14 w-full items-center justify-center rounded-xl text-lg font-bold"
+          >
+            Escribir por WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
+          </a>
+        )}
         <p className="mt-4">
           <Link
             href={`/${tenant.slug}`}

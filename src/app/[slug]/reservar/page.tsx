@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FlujoReserva } from "@/components/reserva/FlujoReserva";
+import { enlaceContacto } from "@/lib/contacto";
 import { diasDisponibles } from "@/lib/disponibilidad";
 import { preseleccionDesdeConsulta } from "@/lib/preseleccion";
 import { obtenerTenant } from "@/lib/tenants/obtener";
@@ -28,12 +29,21 @@ export default async function PaginaReservar({
   const tenant = obtenerTenant(slug);
   if (!tenant) notFound();
 
-  const { nombre, textos, servicios, profesionales, whatsapp, logo } = tenant;
+  const { nombre, textos, servicios, profesionales, logo, demo } = tenant;
   const dias = diasDisponibles(tenant, new Date());
   return (
     <main className="flex flex-1 flex-col">
       <FlujoReserva
-        tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales, whatsapp, logo }}
+        tenant={{
+          slug: tenant.slug,
+          nombre,
+          textos,
+          servicios,
+          profesionales,
+          logo,
+          demo,
+          enlaceContacto: enlaceContacto(tenant, `Hola, quiero pedir una ${textos.reserva}.`),
+        }}
         dias={dias}
         inicial={preseleccionDesdeConsulta(tenant, dias, await searchParams)}
       />

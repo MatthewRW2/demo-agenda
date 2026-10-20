@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { randomBytes } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { like } from "drizzle-orm";
@@ -74,4 +76,20 @@ export async function llenarYEnviar(page: Page, nombre: string, celular: string)
 /** Lista de botones de hora de la pantalla actual. */
 export function listaDeHoras(page: Page) {
   return page.getByRole("list").filter({ has: page.getByRole("button", { name: /[ap]. m./ }) });
+}
+
+/** `contactoDemo` del JSON de un negocio (lo configura quien muestra la demo), o `undefined`. */
+export function contactoDemoDe(
+  slug: string,
+): { nombre?: string; whatsapp: string; instagram?: string } | undefined {
+  const json = JSON.parse(
+    readFileSync(path.join(process.cwd(), "tenants", `${slug}.json`), "utf8"),
+  );
+  return json.contactoDemo;
+}
+
+/** Número de relleno del JSON: en una demo no debe aparecer jamás en la página. */
+export function whatsappDeRelleno(slug: string): string {
+  return JSON.parse(readFileSync(path.join(process.cwd(), "tenants", `${slug}.json`), "utf8"))
+    .whatsapp;
 }

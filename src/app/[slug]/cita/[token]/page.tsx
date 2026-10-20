@@ -7,7 +7,8 @@ import { CopiarEnlace } from "@/components/reserva/CopiarEnlace";
 import { GestionCita } from "@/components/reserva/GestionCita";
 import { getDb } from "@/db";
 import { diasDisponibles } from "@/lib/disponibilidad";
-import { enlaceGoogleCalendar, enlaceWhatsApp } from "@/lib/enlaces";
+import { enlaceContacto } from "@/lib/contacto";
+import { enlaceGoogleCalendar } from "@/lib/enlaces";
 import { formatearFechaHora } from "@/lib/fechas";
 import { formatearCOP } from "@/lib/moneda";
 import { ETIQUETA_ESTADO } from "@/lib/estados";
@@ -82,6 +83,10 @@ export default async function PaginaCita({
   const permiso = evaluarGestion(tenant, reserva, ahora);
   // Confirmada y todavía por venir: es la única que muestra acciones.
   const vigente = activa && reserva.startsAt > ahora;
+  const enlaceEscribir = enlaceContacto(
+    tenant,
+    `Hola, necesito cambiar o cancelar mi ${tenant.textos.reserva}. Código: ${codigo}.`,
+  );
   const nombreServicio = servicio?.nombre ?? reserva.serviceId;
   const nombreProfesional = profesional?.nombre ?? reserva.professionalId;
 
@@ -154,23 +159,26 @@ export default async function PaginaCita({
 
         {vigente ? (
           <div className="flex flex-col gap-3">
-            <a
-              href={enlaceConfirmarPorWhatsApp({
-                tenant,
-                nombreCliente: reserva.customerName,
-                servicio: nombreServicio,
-                profesional: nombreProfesional,
-                inicio: reserva.startsAt,
-                codigo,
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-acento text-sobre-acento inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl text-lg font-bold"
-            >
-              <IconoWhatsApp />
-              Confirmar por WhatsApp
-              <span className="sr-only"> (abre en otra pestaña)</span>
-            </a>
+            {/* En una demo el número del JSON es de relleno: no se ofrece escribirle una confirmación. */}
+            {!tenant.demo && (
+              <a
+                href={enlaceConfirmarPorWhatsApp({
+                  tenant,
+                  nombreCliente: reserva.customerName,
+                  servicio: nombreServicio,
+                  profesional: nombreProfesional,
+                  inicio: reserva.startsAt,
+                  codigo,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-acento text-sobre-acento inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl text-lg font-bold"
+              >
+                <IconoWhatsApp />
+                Confirmar por WhatsApp
+                <span className="sr-only"> (abre en otra pestaña)</span>
+              </a>
+            )}
             <a
               href={enlaceGoogleCalendar({
                 titulo: `${nombreServicio} en ${tenant.nombre}`,
@@ -208,17 +216,16 @@ export default async function PaginaCita({
                   con al menos {tenant.anticipacionMinHoras}{" "}
                   {tenant.anticipacionMinHoras === 1 ? "hora" : "horas"} de anticipación.
                 </p>
-                <a
-                  href={enlaceWhatsApp(
-                    tenant.whatsapp,
-                    `Hola, necesito cambiar o cancelar mi ${tenant.textos.reserva}. Código: ${codigo}.`,
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${ENLACE} mt-2 inline-flex min-h-12 items-center`}
-                >
-                  Escríbenos por WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
-                </a>
+                {enlaceEscribir && (
+                  <a
+                    href={enlaceEscribir}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${ENLACE} mt-2 inline-flex min-h-12 items-center`}
+                  >
+                    Escríbenos por WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
+                  </a>
+                )}
               </div>
             )}
           </div>

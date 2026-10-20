@@ -7,7 +7,6 @@
   "colores": { "primario": "#0F4C5C", "acento": "#F4B860" },
   "whatsapp": "573102345678",
   "direccion": "Cra. 7 #116-50, Usaquén, Bogotá",
-  "instagram": "clinicadentalsonrisa",
   "horario": {
     "lun": ["08:00", "18:00"],
     "mar": ["08:00", "18:00"],
@@ -48,5 +47,25 @@
     }
   ],
   "textos": { "profesional": "odontólogo", "reserva": "cita" },
+  "resenas": [
+    {
+      "autor": "Camila R.",
+      "texto": "Agendé mi limpieza desde el celular en un minuto y quedó confirmada al instante. Nada de llamar ni esperar respuesta.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    },
+    {
+      "autor": "Jorge P.",
+      "texto": "Me atendieron a la hora exacta de mi cita, sin sala de espera larga. Se agradece la puntualidad.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    },
+    {
+      "autor": "Daniela S.",
+      "texto": "El día anterior me llegó el recordatorio por WhatsApp y pude mover mi cita sin llamar a nadie.",
+      "estrellas": 5,
+      "fuente": "Ejemplo"
+    }
+  ],
   "demo": true
 }

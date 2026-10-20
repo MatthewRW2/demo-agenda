@@ -79,6 +79,12 @@ export function PasoDatos({
       }}
       className="flex flex-col gap-5"
     >
+      {tenant.demo && (
+        <p className="bg-papel-2 text-tinta rounded-xl p-4 text-base">
+          <strong>Es una demo: puedes usar datos inventados.</strong> Las reservas de la demo se
+          borran cada día.
+        </p>
+      )}
       <Campo
         id="nombre"
         etiqueta="Tu nombre"
@@ -91,7 +97,11 @@ export function PasoDatos({
       <Campo
         id="celular"
         etiqueta="Celular"
-        ayuda="Te escribiremos por WhatsApp si hay algún cambio."
+        ayuda={
+          tenant.demo
+            ? "Sirve cualquier número de 10 dígitos que empiece por 3, como 300 123 4567."
+            : "Te escribiremos por WhatsApp si hay algún cambio."
+        }
         tipo="tel"
         modo="tel"
         autoComplete="tel-national"

@@ -32,5 +32,6 @@ export const tenantDePrueba: Tenant = {
     { id: "mateo", nombre: "Mateo", servicios: ["corte", "nino"] },
   ],
   textos: { profesional: "barbero", reserva: "cita" },
+  contactoDemo: { nombre: "Mateo", whatsapp: "573109998877" },
   demo: true,
 };

@@ -173,6 +173,37 @@ describe("campos opcionales del rediseño", () => {
   });
 });
 
+describe("contactoDemo (opcional)", () => {
+  const base = () => leerReal("don-carlos.json");
+
+  it("sin contactoDemo sigue siendo válido", () => {
+    const t = base();
+    delete t.contactoDemo;
+    expect(detalles(t)).toEqual([]);
+  });
+
+  it("acepta nombre, WhatsApp e Instagram", () => {
+    const t = base();
+    t.contactoDemo = { nombre: "Mateo", whatsapp: "573109998877", instagram: "mi.perfil" };
+    expect(detalles(t)).toEqual([]);
+  });
+
+  it("rechaza un WhatsApp sin indicativo y un Instagram con @", () => {
+    const t = base();
+    t.contactoDemo = { whatsapp: "3109998877", instagram: "@mi.perfil" };
+    expect(detalles(t)).toEqual([
+      expect.stringContaining("contactoDemo.whatsapp:"),
+      expect.stringContaining("contactoDemo.instagram:"),
+    ]);
+  });
+
+  it("las demos no traen un Instagram de relleno que pueda ser de alguien real", () => {
+    for (const slug of ["don-carlos", "clinica-sonrisa"]) {
+      expect(leerReal(slug + ".json").instagram).toBeUndefined();
+    }
+  });
+});
+
 describe("cargarTenant", () => {
   let dir: string;
   beforeEach(() => {

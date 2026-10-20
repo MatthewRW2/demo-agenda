@@ -83,6 +83,24 @@ export const tenantSchema = z
       .string()
       .regex(/^[A-Za-z0-9._]{1,30}$/, "usuario de Instagram sin @ ni URL")
       .optional(),
+    /**
+     * Contacto de quien muestra la demo (opcional). En un negocio con `"demo": true` los botones de
+     * WhatsApp e Instagram usan SOLO estos datos (nunca el número ni el usuario del JSON, que son de
+     * relleno); sin ellos, esos botones no se muestran.
+     */
+    contactoDemo: z
+      .object({
+        /** Cómo te saludan en el mensaje ("Hola Mateo, vi la demo de..."). */
+        nombre: textoSchema.max(40, "máximo 40 caracteres").optional(),
+        whatsapp: z
+          .string()
+          .regex(/^57\d{10}$/, "debe incluir el indicativo 57 y 10 dígitos, sin + ni espacios"),
+        instagram: z
+          .string()
+          .regex(/^[A-Za-z0-9._]{1,30}$/, "usuario de Instagram sin @ ni URL")
+          .optional(),
+      })
+      .optional(),
     horario: horarioSchema,
     intervaloMin: z.number().int().min(5).max(120),
     anticipacionMinHoras: z.number().int().nonnegative(),

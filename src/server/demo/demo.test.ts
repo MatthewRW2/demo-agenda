@@ -280,6 +280,41 @@ describe("sembrarDemo contra Postgres real", () => {
     expect(await contar("prueba")).toEqual(segunda); // reemplazó, no acumuló
   });
 
+  it("el reinicio borra también las reservas que hizo un visitante y no vienen del seed", async () => {
+    await sembrarDemo(base(), tenantDePrueba, MIERCOLES);
+    const visitante = {
+      tenantSlug: "prueba",
+      serviceId: "corte",
+      professionalId: "carlos",
+      startsAt: bogota("2030-03-20", "11:00"),
+      endsAt: bogota("2030-03-20", "11:30"),
+      customerName: "Visitante de LinkedIn",
+      customerPhone: "3201234567",
+      manageToken: "t".repeat(43),
+    };
+    await db.insert(bookings).values(visitante);
+    const bloqueo = {
+      tenantSlug: "prueba",
+      professionalId: null,
+      startsAt: bogota("2030-03-20", "14:00"),
+      endsAt: bogota("2030-03-20", "15:00"),
+      reason: "Bloqueo de un visitante",
+    };
+    await db.insert(blocks).values(bloqueo);
+
+    await sembrarDemo(base(), tenantDePrueba, MIERCOLES);
+
+    const nombres = (await db.select().from(bookings).where(eq(bookings.tenantSlug, "prueba"))).map(
+      (r) => r.customerName,
+    );
+    expect(nombres).not.toContain("Visitante de LinkedIn");
+    const motivos = (await db.select().from(blocks).where(eq(blocks.tenantSlug, "prueba"))).map(
+      (b) => b.reason,
+    );
+    expect(motivos).not.toContain("Bloqueo de un visitante");
+    expect(await contar("prueba")).toEqual({ reservas: 60, bloqueos: motivos.length });
+  });
+
   it("solo borra los datos del negocio que se siembra", async () => {
     const otro = { ...tenantDePrueba, slug: "otro-demo" };
     await sembrarDemo(base(), otro, MIERCOLES);

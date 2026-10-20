@@ -421,3 +421,20 @@ Rama `rediseno`. No toca la lógica de reservas ni la base de datos.
   del negocio. No se aplicó: espacios de no separación en las horas ("9:00 a. m.") porque cambiaría el texto que
   usan las pruebas y los lectores; la barra y las fichas no se parten en la práctica.
 - **Medido** (Lighthouse móvil, build local): página pública 94/94, reservar 95 y 97, accesibilidad 100 en todas.
+
+## Ajustes al modo demo antes de publicar en LinkedIn
+
+- **Contacto**: nuevo campo opcional `contactoDemo` (`nombre`, `whatsapp`, `instagram`). En un negocio con
+  `"demo": true`, `src/lib/contacto.ts` es la única puerta: los botones de WhatsApp abren `wa.me/<contactoDemo>` con
+  "Hola {nombre}, vi la demo de {negocio} y quiero una para mi negocio", el Instagram es el de `contactoDemo`, y sin
+  ese campo los botones no se muestran. El número y el usuario del JSON (de relleno) no se usan nunca ni viajan al
+  navegador (`TenantPublico` ya no lleva `whatsapp`). Los JSON de las demos ya no traen `instagram`.
+- **"Confirmar por WhatsApp" se oculta en una demo**: le escribiría al número de relleno, y mandar la confirmación
+  de una cita inventada al contacto de quien muestra la demo confundiría. En un negocio real sigue igual.
+- **Datos personales**: el formulario de una demo dice "Es una demo: puedes usar datos inventados" y que las
+  reservas se borran cada día; la ayuda del celular ya no promete un WhatsApp. El reinicio diario (cron
+  `restablecer-demo`, 9:00 UTC) borra TODAS las citas y bloqueos del negocio, vengan del seed o de un visitante;
+  una prueba lo verifica con una reserva y un bloqueo de visitante.
+- **Reseñas**: viven en el JSON de cada negocio (sector propio: barbería y consultorio). En una demo se rotulan
+  siempre "Reseñas de ejemplo"; en un negocio real, no. Una demo sin reseñas propias sigue mostrando las genéricas.
+- `validar-tenants` avisa si una demo no tiene `contactoDemo`.

@@ -35,14 +35,15 @@ export const RESENAS_DE_EJEMPLO: ResenaVista[] = [
 ];
 
 /**
- * Qué reseñas mostrar: las reales del JSON si las hay; si no, las de ejemplo solo en una demo; y en un
- * negocio real sin reseñas, ninguna (la sección se oculta).
+ * Qué reseñas mostrar: las del JSON del negocio si las hay (en una demo van rotuladas como ejemplo,
+ * porque son inventadas); una demo sin ellas muestra las genéricas de arriba; y un negocio real sin
+ * reseñas no muestra la sección.
  */
 export function resenasParaMostrar(
   tenant: Pick<Tenant, "resenas" | "demo">,
 ): { resenas: ResenaVista[]; esEjemplo: boolean } | null {
   if (tenant.resenas && tenant.resenas.length > 0) {
-    return { resenas: tenant.resenas, esEjemplo: false };
+    return { resenas: tenant.resenas, esEjemplo: tenant.demo };
   }
   if (tenant.demo) return { resenas: RESENAS_DE_EJEMPLO, esEjemplo: true };
   return null;

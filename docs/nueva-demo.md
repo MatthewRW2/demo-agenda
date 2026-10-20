@@ -59,9 +59,10 @@ Notas:
 | `colores.primario` | Un color de su logo | Cualquiera: la portada y las capas se tiñen con él, y el texto, los bordes y los fondos suaves se derivan solos con contraste garantizado (también con colores claros) |
 | `colores.acento` | Otro color de su logo | Fondo de los botones; el color del texto encima se elige solo para que contraste |
 | `resenas` | Opcional. Reseñas reales de sus clientes | Hasta 6, cada una con `autor`, `texto`, `estrellas` (1–5, por defecto 5) y `fuente` opcional. Sin reseñas: en una demo (`"demo": true`) salen tres de ejemplo rotuladas como inventadas; en un negocio real la sección no aparece |
-| `whatsapp` | Su ficha de Google o su Instagram | `57` + 10 dígitos, sin `+` ni espacios: `573102345678` |
+| `whatsapp` | Su ficha de Google o su Instagram | `57` + 10 dígitos, sin `+` ni espacios: `573102345678`. **En una demo (`"demo": true`) nunca se usa**: los botones de WhatsApp llevan a `contactoDemo` (abajo) |
 | `direccion` | Su ficha de Google | Se usa también para el mapa |
-| `instagram` | Su perfil | Solo el usuario, sin `@` ni URL. Bórralo si no tiene |
+| `instagram` | Su perfil | Solo el usuario, sin `@` ni URL. Bórralo si no tiene. **En una demo tampoco se usa** (solo el de `contactoDemo`): no pongas el de un negocio real en una demo |
+| `contactoDemo` | **Tu** contacto, para las demos | `{ "nombre": "Mateo", "whatsapp": "57…", "instagram": "tu_usuario" }`; `nombre` e `instagram` son opcionales. Con `"demo": true`, los botones de WhatsApp abren `wa.me/<tu número>` con "Hola Mateo, vi la demo de {negocio} y quiero una para mi negocio", y el Instagram es el tuyo. Sin él, esos botones no aparecen (y `validar-tenants` avisa). Cópialo de otra demo; con `"demo": false` se ignora |
 | `horario` | Su ficha de Google | `["08:00", "18:00"]` por día en formato 24 horas; `null` si cierra. Los siete días son obligatorios |
 | `intervaloMin` | Cada cuánto empiezan las citas | 15 o 30 casi siempre |
 | `anticipacionMinHoras` | Cuánto aviso necesita | Aplica a reservar, cancelar y cambiar |

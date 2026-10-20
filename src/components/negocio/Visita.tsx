@@ -1,5 +1,6 @@
 import { IconoInstagram, IconoUbicacion, IconoWhatsApp } from "@/components/iconos";
-import { enlaceComoLlegar, enlaceInstagram, enlaceWhatsApp, urlMapaEmbebido } from "@/lib/enlaces";
+import { enlaceContacto, enlaceInstagramContacto, contactoPublico } from "@/lib/contacto";
+import { enlaceComoLlegar, urlMapaEmbebido } from "@/lib/enlaces";
 import { agruparHorario } from "@/lib/horario";
 import type { Tenant } from "@/lib/tenants/schema";
 
@@ -9,6 +10,9 @@ const BOTON_CONTACTO =
 /** Horario compacto, contacto y mapa: todo lo que hace falta para llegar o escribir. */
 export function Visita({ tenant }: { tenant: Tenant }) {
   const grupos = agruparHorario(tenant.horario);
+  const whatsapp = enlaceContacto(tenant, `Hola, quiero más información sobre ${tenant.nombre}.`);
+  const instagram = enlaceInstagramContacto(tenant);
+  const usuarioInstagram = contactoPublico(tenant).instagram;
 
   return (
     <section aria-labelledby="visita" className="py-10 lg:py-14">
@@ -34,34 +38,35 @@ export function Visita({ tenant }: { tenant: Tenant }) {
           </dl>
         </div>
 
-        <div>
-          <h3 className="font-display text-tinta mb-3 text-xl font-bold">Escríbenos</h3>
-          <div className="flex flex-col gap-3">
-            <a
-              href={enlaceWhatsApp(
-                tenant.whatsapp,
-                `Hola, quiero más información sobre ${tenant.nombre}.`,
+        {(whatsapp || instagram) && (
+          <div>
+            <h3 className="font-display text-tinta mb-3 text-xl font-bold">Escríbenos</h3>
+            <div className="flex flex-col gap-3">
+              {whatsapp && (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={BOTON_CONTACTO}
+                >
+                  <IconoWhatsApp />
+                  WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
+                </a>
               )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={BOTON_CONTACTO}
-            >
-              <IconoWhatsApp />
-              WhatsApp<span className="sr-only"> (abre en otra pestaña)</span>
-            </a>
-            {tenant.instagram && (
-              <a
-                href={enlaceInstagram(tenant.instagram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={BOTON_CONTACTO}
-              >
-                <IconoInstagram />@{tenant.instagram}
-                <span className="sr-only"> en Instagram (abre en otra pestaña)</span>
-              </a>
-            )}
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={BOTON_CONTACTO}
+                >
+                  <IconoInstagram />@{usuarioInstagram}
+                  <span className="sr-only"> en Instagram (abre en otra pestaña)</span>
+                </a>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="mt-12">

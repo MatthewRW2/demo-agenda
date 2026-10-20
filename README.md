@@ -117,6 +117,8 @@ Si `ADMIN_PASSWORD` no está definida, el panel queda cerrado. Cambiarla cierra 
 Con `"demo": true` en el JSON del negocio:
 
 - aparece la franja "Demo con datos ficticios" arriba de todas las pantallas;
+- los botones de WhatsApp e Instagram usan solo `contactoDemo` (tu contacto; sin él no se muestran) y nunca el número del JSON;
+- el formulario de reserva avisa que se pueden usar datos inventados;
 - el panel muestra la contraseña en la pantalla de acceso y un botón **Restablecer demo**;
 - `npm run seed -- <slug>` crea ~60 citas ficticias (últimas 2 semanas y próximas 2, con inasistencias y
   cancelaciones) y 2 bloqueos. **Borra las citas y bloqueos que hubiera** de ese negocio, y se niega con
