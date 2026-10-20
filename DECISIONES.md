@@ -437,4 +437,4 @@ Rama `rediseno`. No toca la lógica de reservas ni la base de datos.
   una prueba lo verifica con una reserva y un bloqueo de visitante.
 - **Reseñas**: viven en el JSON de cada negocio (sector propio: barbería y consultorio). En una demo se rotulan
   siempre "Reseñas de ejemplo"; en un negocio real, no. Una demo sin reseñas propias sigue mostrando las genéricas.
-- `validar-tenants` avisa si una demo no tiene `contactoDemo`.
+- `contactoDemo` es opcional y por defecto no se configura: el contacto lo da quien envía el enlace (LinkedIn), así que las demos publicadas no muestran botones de WhatsApp ni de Instagram y no hay ningún número personal en el repo ni en la página. No hay aviso en `validar-tenants` por no tenerlo.

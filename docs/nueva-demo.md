@@ -62,7 +62,7 @@ Notas:
 | `whatsapp` | Su ficha de Google o su Instagram | `57` + 10 dígitos, sin `+` ni espacios: `573102345678`. **En una demo (`"demo": true`) nunca se usa**: los botones de WhatsApp llevan a `contactoDemo` (abajo) |
 | `direccion` | Su ficha de Google | Se usa también para el mapa |
 | `instagram` | Su perfil | Solo el usuario, sin `@` ni URL. Bórralo si no tiene. **En una demo tampoco se usa** (solo el de `contactoDemo`): no pongas el de un negocio real en una demo |
-| `contactoDemo` | **Tu** contacto, para las demos | `{ "nombre": "Mateo", "whatsapp": "57…", "instagram": "tu_usuario" }`; `nombre` e `instagram` son opcionales. Con `"demo": true`, los botones de WhatsApp abren `wa.me/<tu número>` con "Hola Mateo, vi la demo de {negocio} y quiero una para mi negocio", y el Instagram es el tuyo. Sin él, esos botones no aparecen (y `validar-tenants` avisa). Cópialo de otra demo; con `"demo": false` se ignora |
+| `contactoDemo` | **Tu** contacto, para las demos | `{ "nombre": "Mateo", "whatsapp": "57…", "instagram": "tu_usuario" }`; `nombre` e `instagram` son opcionales. Con `"demo": true`, los botones de WhatsApp abren `wa.me/<tu número>` con "Hola Mateo, vi la demo de {negocio} y quiero una para mi negocio", y el Instagram es el tuyo. Es opcional: sin él, una demo no muestra botones de WhatsApp ni de Instagram (el contacto lo da quien envía el enlace, por ejemplo por LinkedIn). Cópialo de otra demo; con `"demo": false` se ignora |
 | `horario` | Su ficha de Google | `["08:00", "18:00"]` por día en formato 24 horas; `null` si cierra. Los siete días son obligatorios |
 | `intervaloMin` | Cada cuánto empiezan las citas | 15 o 30 casi siempre |
 | `anticipacionMinHoras` | Cuánto aviso necesita | Aplica a reservar, cancelar y cambiar |

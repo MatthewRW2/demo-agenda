@@ -9,9 +9,7 @@ import type { Tenant } from "./schema";
 describe("advertenciasDeTenant", () => {
   it("un negocio bien armado no tiene avisos", () => {
     expect(advertenciasDeTenant(tenantDePrueba)).toEqual([]);
-    // El contacto de quien muestra la demo es personal y se agrega aparte; lo demás debe estar limpio.
-    const real = { ...cargarTenant("don-carlos")!, contactoDemo: { whatsapp: "573109998877" } };
-    expect(advertenciasDeTenant(real)).toEqual([]);
+    expect(advertenciasDeTenant(cargarTenant("don-carlos")!)).toEqual([]);
   });
 
   it("la plantilla sin tocar avisa de todos sus valores de relleno", () => {
@@ -34,11 +32,8 @@ describe("advertenciasDeTenant", () => {
     }
   });
 
-  it("avisa si una demo no tiene contactoDemo, y no si lo tiene ni si es un negocio real", () => {
-    const sin: Tenant = { ...tenantDePrueba, contactoDemo: undefined };
-    expect(advertenciasDeTenant(sin)).toEqual([expect.stringContaining("contactoDemo: falta")]);
-    expect(advertenciasDeTenant(tenantDePrueba)).toEqual([]);
-    expect(advertenciasDeTenant({ ...sin, demo: false })).toEqual([]);
+  it("una demo sin contactoDemo no avisa de nada: simplemente no muestra botones de contacto", () => {
+    expect(advertenciasDeTenant({ ...tenantDePrueba, contactoDemo: undefined })).toEqual([]);
   });
 
   it("no avisa por colores: la paleta se deriva sola y funciona con cualquier par", () => {

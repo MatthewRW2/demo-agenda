@@ -25,14 +25,6 @@ export function advertenciasDeTenant(tenant: Tenant): string[] {
   ];
   for (const [aplica, mensaje] of relleno) if (aplica) avisos.push(mensaje);
 
-  // --- una demo nunca contacta al número ni al Instagram del JSON (son de relleno) ---
-  if (tenant.demo && !tenant.contactoDemo) {
-    avisos.push(
-      "contactoDemo: falta; en una demo los botones de WhatsApp e Instagram no se muestran (el número " +
-        'y el usuario del JSON nunca se usan). Agrega tu contacto: "contactoDemo": { "nombre": "Tu nombre", "whatsapp": "57…" }',
-    );
-  }
-
   tenant.servicios.forEach((s, i) => {
     if (/^servicio \d+$/i.test(s.nombre))
       avisos.push(`servicios[${i}].nombre: "${s.nombre}" es de la plantilla`);
