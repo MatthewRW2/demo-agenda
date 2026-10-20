@@ -93,7 +93,7 @@ export function FormCitaManual({
 
   return (
     <details
-      className="rounded-xl border-2 border-neutral-200 p-4"
+      className="border-linea rounded-xl border-2 p-4"
       onToggle={(e) => {
         if ((e.currentTarget as HTMLDetailsElement).open && horas === null) void cargarHoras(sel);
       }}
@@ -181,7 +181,7 @@ export function FormCitaManual({
               </option>
             ))}
           </select>
-          <p id="cm-hora-ayuda" className="mt-1 text-sm text-neutral-600">
+          <p id="cm-hora-ayuda" className="text-tinta-suave mt-1 text-sm">
             Aquí no rige la anticipación mínima: puedes registrar a quien ya está en el local.
           </p>
           {error("hora") && (

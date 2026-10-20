@@ -36,7 +36,7 @@ export function DetalleCita({ tenant, reserva, hrefCerrar }: Props) {
   return (
     <section
       aria-labelledby="detalle-titulo"
-      className="border-primario rounded-xl border-2 p-4"
+      className="border-primario-texto rounded-xl border-2 p-4"
       data-testid="detalle-cita"
     >
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -52,22 +52,22 @@ export function DetalleCita({ tenant, reserva, hrefCerrar }: Props) {
         </Link>
       </div>
 
-      <dl className="mb-4 divide-y divide-neutral-100 text-sm">
+      <dl className="divide-linea mb-4 divide-y text-sm">
         {filas.map(([etiqueta, valor]) => (
           <div key={etiqueta} className="flex justify-between gap-4 py-2">
-            <dt className="text-neutral-600">{etiqueta}</dt>
+            <dt className="text-tinta-suave">{etiqueta}</dt>
             <dd className="text-right font-semibold">{valor}</dd>
           </div>
         ))}
         <div className="flex justify-between gap-4 py-2">
-          <dt className="text-neutral-600">Celular</dt>
+          <dt className="text-tinta-suave">Celular</dt>
           <dd className="text-right font-semibold">
             {reserva.customerPhone ? (
               <a
                 href={enlaceWhatsApp(`57${reserva.customerPhone}`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primario underline underline-offset-4"
+                className="text-primario-texto underline underline-offset-4"
               >
                 {reserva.customerPhone}
                 <span className="sr-only"> (abre WhatsApp en otra pestaña)</span>

@@ -44,7 +44,7 @@ export function FilaRecordatorio({ slug, id, hora, cliente, detalle, href, envia
         <p className="font-bold">
           {hora} · {cliente}
         </p>
-        <p className="text-sm text-neutral-700">{detalle}</p>
+        <p className="text-tinta-suave text-sm">{detalle}</p>
         {enviado && (
           <p
             className="mt-1 text-sm font-semibold text-emerald-800"
@@ -65,14 +65,14 @@ export function FilaRecordatorio({ slug, id, hora, cliente, detalle, href, envia
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => void alAbrirWhatsApp()}
-          className="border-primario text-primario inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 px-4 font-semibold"
+          className="border-primario-texto text-primario-texto inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 px-4 font-semibold"
         >
           <IconoWhatsApp />
           {enviado ? "Enviar de nuevo" : "Enviar recordatorio"}
           <span className="sr-only"> a {cliente} (abre WhatsApp en otra pestaña)</span>
         </a>
       ) : (
-        <p className="text-sm text-neutral-600">Sin celular: no se puede enviar</p>
+        <p className="text-tinta-suave text-sm">Sin celular: no se puede enviar</p>
       )}
     </li>
   );

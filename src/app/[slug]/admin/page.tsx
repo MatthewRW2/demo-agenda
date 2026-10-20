@@ -20,7 +20,7 @@ import { bloqueosEnRango, buscarReserva, reservasEnRango } from "@/server/admin/
 export const dynamic = "force-dynamic";
 
 const ENLACE =
-  "inline-flex min-h-12 items-center rounded-xl border-2 border-primario px-4 font-semibold text-primario";
+  "inline-flex min-h-12 items-center rounded-xl border-2 border-primario-texto px-4 font-semibold text-primario-texto";
 
 export default async function PaginaAdmin({ params, searchParams }: PageProps<"/[slug]/admin">) {
   const { slug } = await params;
@@ -70,7 +70,7 @@ export default async function PaginaAdmin({ params, searchParams }: PageProps<"/
       <NavAdmin slug={slug} nombre={tenant.nombre} activa="agenda" />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6">
         <div className="flex flex-col gap-3">
-          <h1 className="text-2xl font-bold">
+          <h1 className="titulo-seccion text-tinta">
             {vista === "dia"
               ? formatearFechaLarga(fecha)
               : `Semana del ${formatearFechaLarga(lunes)}`}
@@ -87,7 +87,7 @@ export default async function PaginaAdmin({ params, searchParams }: PageProps<"/
             </Link>
             <Link
               href={base(fecha, vista === "dia" ? "semana" : "dia")}
-              className={`${ENLACE} bg-neutral-100`}
+              className={`${ENLACE} bg-papel-2`}
             >
               Ver {vista === "dia" ? "la semana" : "el día"}
             </Link>

@@ -35,19 +35,19 @@ export default async function PaginaRecordatorios({
       <NavAdmin slug={slug} nombre={tenant.nombre} activa="recordatorios" />
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6">
         <div>
-          <h1 className="text-2xl font-bold">Recordatorios de mañana</h1>
-          <p className="text-neutral-700">
+          <h1 className="titulo-seccion text-tinta">Recordatorios de mañana</h1>
+          <p className="text-tinta-suave">
             {formatearFechaLarga(manana)} · {citas.length} cita{citas.length === 1 ? "" : "s"}
             {citas.length > 0 && `, ${pendientes} por recordar`}
           </p>
         </div>
 
         {citas.length === 0 ? (
-          <p className="rounded-xl bg-neutral-100 p-4">
+          <p className="bg-papel-2 rounded-xl p-4">
             No hay citas confirmadas para mañana, así que no hay nada que recordar.
           </p>
         ) : (
-          <ul className="divide-y divide-neutral-200 rounded-xl border border-neutral-200">
+          <ul className="divide-linea border-linea divide-y rounded-xl border">
             {citas.map((c) => {
               const hora = formatearHora(aFechaHoraBogota(c.startsAt).hora);
               return (

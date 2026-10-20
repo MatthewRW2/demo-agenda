@@ -12,8 +12,8 @@ const ANCHO_HORAS = 60;
 const COLOR_ESTADO: Record<Booking["status"], string> = {
   confirmada: "bg-primario text-sobre-primario",
   completada: "bg-emerald-800 text-white",
-  no_asistio: "bg-amber-300 text-neutral-900",
-  cancelada: "bg-neutral-300 text-neutral-900",
+  no_asistio: "bg-amber-300 text-tinta",
+  cancelada: "bg-linea text-tinta",
 };
 
 interface Props {
@@ -32,7 +32,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
 
   if (!rango) {
     return (
-      <p className="rounded-xl bg-neutral-100 p-4">
+      <p className="bg-papel-2 rounded-xl p-4">
         El local está cerrado este día y no hay citas ni bloqueos.
         {canceladas > 0 && ` (${canceladas} cancelada${canceladas === 1 ? "" : "s"})`}
       </p>
@@ -48,12 +48,12 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
   return (
     <div>
       {columnas.length > 2 && (
-        <p className="mb-2 text-sm text-neutral-700 md:hidden">
+        <p className="text-tinta-suave mb-2 text-sm md:hidden">
           Desliza hacia los lados para ver a todos los {pluralizar(tenant.textos.profesional)}.
         </p>
       )}
       <div
-        className="overflow-x-auto rounded-xl border border-neutral-200"
+        className="border-linea overflow-x-auto rounded-xl border"
         role="region"
         aria-label={`Agenda del día, ${columnas.length} columnas`}
         tabIndex={0}
@@ -65,11 +65,11 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
             minWidth: ANCHO_HORAS + columnas.length * 150,
           }}
         >
-          <div className="border-b border-neutral-200 bg-neutral-50" />
+          <div className="border-linea bg-papel border-b" />
           {columnas.map((p) => (
             <h2
               key={p.id}
-              className="border-b border-l border-neutral-200 bg-neutral-50 p-2 text-center font-bold"
+              className="border-linea bg-papel border-b border-l p-2 text-center font-bold"
             >
               {p.nombre}
             </h2>
@@ -80,7 +80,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
             {marcas.map((m) => (
               <span
                 key={m}
-                className={`absolute right-1 text-xs whitespace-nowrap text-neutral-600 ${m === desdeMin ? "" : "-translate-y-2"}`}
+                className={`text-tinta-suave absolute right-1 text-xs whitespace-nowrap ${m === desdeMin ? "" : "-translate-y-2"}`}
                 style={{ top: (m - desdeMin) * PX_POR_MINUTO }}
               >
                 {formatearHoraCorta(`${String(m / 60).padStart(2, "0")}:00`)}
@@ -91,7 +91,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
           {columnas.map((p) => (
             <div
               key={p.id}
-              className="relative border-l border-neutral-200"
+              className="border-linea relative border-l"
               style={{ height: alto }}
               data-columna={p.id}
             >
@@ -99,7 +99,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
                 <div
                   key={m}
                   aria-hidden
-                  className="absolute inset-x-0 border-t border-neutral-100"
+                  className="border-linea absolute inset-x-0 border-t"
                   style={{ top: (m - desdeMin) * PX_POR_MINUTO }}
                 />
               ))}
@@ -115,7 +115,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
                   return (
                     <div
                       key={b.id}
-                      className="absolute inset-x-0 overflow-hidden border-y border-neutral-400 bg-neutral-200 p-1 text-xs text-neutral-800"
+                      className="border-borde-control bg-papel-2 text-tinta absolute inset-x-0 overflow-hidden border-y p-1 text-xs"
                       style={{
                         top: pos.topMin * PX_POR_MINUTO,
                         height: pos.altoMin * PX_POR_MINUTO,
@@ -170,7 +170,7 @@ export function AgendaDia({ tenant, fecha, reservas, bloqueos, seleccionada }: P
         </div>
       </div>
       {canceladas > 0 && (
-        <p className="mt-2 text-sm text-neutral-700">
+        <p className="text-tinta-suave mt-2 text-sm">
           {canceladas} cita{canceladas === 1 ? "" : "s"} cancelada{canceladas === 1 ? "" : "s"} este
           día (no se dibuj{canceladas === 1 ? "a" : "an"}: el horario está libre).
         </p>
