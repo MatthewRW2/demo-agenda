@@ -402,3 +402,22 @@ Rama `rediseno`. No toca la lógica de reservas ni la base de datos.
   ficticio de una demo: no usar en material que las identifique con un negocio real.
 - **Medido** (Lighthouse móvil, build de producción local): rendimiento 93 y 94, accesibilidad 100.
 - No se usó el binario de `impeccable`: se siguieron sus guías escritas.
+
+## Rediseño — flujo de reserva, tu cita y panel
+
+- **Resumen siempre a la vista**: tiquete lateral fijo en pantallas anchas y barra fija abajo en el celular (lo
+  elegido + total). Cada elección aparece al hacerla; el talón lleva el total.
+- **Progreso**: pasos nombrados; los hechos se tocan para volver (`aria-current="step"` en el actual). Con
+  "Reservar con X" el paso del profesional no existe (3 pasos).
+- **Horarios**: agrupados en mañana (antes de 12), tarde (12–17:59) y noche (desde 18), botones de 56 px. Sin
+  transiciones de color en los botones elegidos (axe medía colores a medias).
+- **Confirmación**: una marca que se dibuja una sola vez (único movimiento de las pantallas); con
+  `prefers-reduced-motion` aparece ya dibujada. "Tu cita" es un tiquete con código y estado.
+- **Cifras**: horas y precios grandes en cifras proporcionales; las tabulares abrían huecos en "$ 90.000" y "9:00".
+- **Panel**: solo tokens de marca, titulares y fondo de papel; sin cambiar su estructura ni su lógica.
+- **Revisión con las guías de Vercel (web-interface-guidelines) sobre lo cambiado**: enlace "Saltar al contenido",
+  `scroll-padding-bottom` para que las barras fijas no tapen el foco, `touch-action: manipulation`, foco al
+  primer campo con error, `spellCheck` apagado en los datos del cliente y `theme-color` con el color primario
+  del negocio. No se aplicó: espacios de no separación en las horas ("9:00 a. m.") porque cambiaría el texto que
+  usan las pruebas y los lectores; la barra y las fichas no se parten en la práctica.
+- **Medido** (Lighthouse móvil, build local): página pública 94/94, reservar 95 y 97, accesibilidad 100 en todas.

@@ -68,7 +68,10 @@ export default async function PaginaAdmin({ params, searchParams }: PageProps<"/
   return (
     <>
       <NavAdmin slug={slug} nombre={tenant.nombre} activa="agenda" />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6">
+      <main
+        id="contenido"
+        className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6"
+      >
         <div className="flex flex-col gap-3">
           <h1 className="titulo-seccion text-tinta">
             {vista === "dia"

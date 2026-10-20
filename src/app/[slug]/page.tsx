@@ -58,7 +58,7 @@ export default async function PaginaNegocio({ params }: PageProps<"/[slug]">) {
             />
           </aside>
 
-          <main className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <main id="contenido" className="min-w-0 lg:col-start-1 lg:row-start-1">
             <Servicios tenant={tenant} />
             <Profesionales tenant={tenant} />
             <Resenas tenant={tenant} />

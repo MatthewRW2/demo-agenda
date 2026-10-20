@@ -39,6 +39,7 @@ function Campo(props: {
         type={tipo}
         inputMode={modo}
         autoComplete={autoComplete}
+        spellCheck={false}
         value={valor}
         onChange={(e) => onCambio(id, e.target.value)}
         aria-invalid={error ? true : undefined}

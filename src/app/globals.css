@@ -159,6 +159,22 @@ textarea {
   animation-duration: 0.4s;
 }
 
+/* Las barras fijas de abajo no deben tapar lo que recibe el foco, y los toques no esperan al doble toque */
+html {
+  scroll-padding-bottom: 6rem;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--primario) 16%, transparent);
+}
+
+a,
+button,
+input,
+select,
+textarea,
+summary,
+label {
+  touch-action: manipulation;
+}
+
 /* Foco visible en cualquier fondo: el contorno toma el color del texto del elemento. */
 :focus-visible {
   outline: 3px solid currentColor;

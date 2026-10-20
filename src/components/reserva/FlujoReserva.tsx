@@ -30,6 +30,12 @@ interface Props {
   inicial?: Preseleccion;
 }
 
+/** Al enviar con errores, el foco va al primer campo marcado (en el orden del formulario). */
+function enfocarPrimerError(errores: Record<string, string>) {
+  const primero = ["nombre", "celular", "correo"].find((c) => errores[c]);
+  if (primero) document.getElementById(primero)?.focus();
+}
+
 function pasoInicial(p: Preseleccion): Paso {
   if (p.servicioId && p.profesionalId) return "fechaHora";
   if (p.servicioId) return "profesional";
@@ -172,8 +178,10 @@ export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
 
     const local = reservaSchema.safeParse(entrada);
     if (!local.success) {
-      setErrores(erroresPorCampo(local.error));
+      const porCampo = erroresPorCampo(local.error);
+      setErrores(porCampo);
       setErrorGeneral("Revisa los datos marcados.");
+      enfocarPrimerError(porCampo);
       return;
     }
 
@@ -195,6 +203,7 @@ export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
       } else {
         setErrores(r.errores ?? {});
         setErrorGeneral(r.mensaje);
+        enfocarPrimerError(r.errores ?? {});
       }
     } catch {
       setErrorGeneral("No pudimos completar tu reserva. Revisa tu conexión e inténtalo de nuevo.");
@@ -204,7 +213,10 @@ export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
 
   if (dias.length === 0) {
     return (
-      <div className="bg-papel mx-auto w-full max-w-lg flex-1 px-4 py-12 text-center">
+      <div
+        id="contenido"
+        className="bg-papel mx-auto w-full max-w-lg flex-1 px-4 py-12 text-center"
+      >
         <h1 className="titulo-seccion text-tinta mb-3">Por ahora no hay días para reservar</h1>
         <p className="text-tinta-suave mb-6 text-base">
           No tenemos días disponibles en este momento. Escríbenos por WhatsApp y te ayudamos a
@@ -251,7 +263,10 @@ export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
         )}
       </CabeceraSimple>
 
-      <div className="mx-auto grid w-full max-w-5xl gap-x-12 px-4 pt-6 pb-32 lg:grid-cols-[minmax(0,1fr)_21rem] lg:pt-10 lg:pb-16">
+      <div
+        id="contenido"
+        className="mx-auto grid w-full max-w-5xl gap-x-12 px-4 pt-6 pb-32 lg:grid-cols-[minmax(0,1fr)_21rem] lg:pt-10 lg:pb-16"
+      >
         <div className="min-w-0">
           <Progreso pasos={pasosVisibles} actual={paso} onIr={setPaso} />
 

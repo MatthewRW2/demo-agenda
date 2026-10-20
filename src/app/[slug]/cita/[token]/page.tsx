@@ -89,7 +89,7 @@ export default async function PaginaCita({
     <div className="bg-papel flex flex-1 flex-col">
       <CabeceraSimple slug={slug} nombre={tenant.nombre} logo={tenant.logo} />
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
+      <main id="contenido" className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
         {nueva && activa && (
           <div role="status" className="mb-8 text-center">
             <Insignia />

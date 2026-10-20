@@ -13,7 +13,10 @@ export function PantallaAcceso({
 }) {
   if (acceso === "sin_config") {
     return (
-      <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-3 px-4 py-10">
+      <main
+        id="contenido"
+        className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-3 px-4 py-10"
+      >
         <h1 className="titulo-seccion text-tinta">Panel no disponible</h1>
         <p className="text-tinta-suave">
           El panel de {tenant.nombre} todavía no está configurado. Quien administra la aplicación

@@ -36,7 +36,10 @@ export function FormLogin({ slug, nombreNegocio, contrasenaDemo }: Props) {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10">
+    <main
+      id="contenido"
+      className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10"
+    >
       <div className="border-linea flex flex-col gap-5 rounded-2xl border bg-white p-6 sm:p-8">
         <div>
           <h1 className="titulo-seccion text-tinta">Panel de {nombreNegocio}</h1>

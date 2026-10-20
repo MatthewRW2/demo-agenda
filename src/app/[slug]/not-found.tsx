@@ -7,7 +7,10 @@ import { useParams } from "next/navigation";
 export default function NoEncontradaEnNegocio() {
   const { slug } = useParams<{ slug: string }>();
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+    <main
+      id="contenido"
+      className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center"
+    >
       <h1 className="text-2xl font-bold">No encontramos esa página</h1>
       <p className="text-neutral-700">
         Puede que el enlace esté incompleto o que la cita ya no exista. Si lo recibiste por correo o

@@ -57,7 +57,10 @@ export default async function PaginaMetricas({
   return (
     <>
       <NavAdmin slug={slug} nombre={tenant.nombre} activa="metricas" />
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6">
+      <main
+        id="contenido"
+        className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-4 py-6"
+      >
         <div>
           <h1 className="titulo-seccion text-tinta">Métricas de la semana</h1>
           <p className="text-tinta-suave">

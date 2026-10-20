@@ -40,7 +40,7 @@ export function PasoFechaHora({
                   type="button"
                   aria-pressed={elegido}
                   onClick={() => onElegirFecha(d)}
-                  className={`relative flex min-h-24 w-[4.5rem] flex-col items-center justify-center gap-0.5 rounded-2xl border-2 transition ${
+                  className={`relative flex min-h-24 w-[4.5rem] flex-col items-center justify-center gap-0.5 rounded-2xl border-2 ${
                     elegido
                       ? "border-primario bg-primario text-sobre-primario"
                       : "hover:border-primario border-linea text-tinta bg-white"
@@ -115,7 +115,7 @@ export function PasoFechaHora({
                           type="button"
                           aria-pressed={horaElegida ? h === horaElegida : undefined}
                           onClick={() => onElegirHora(h)}
-                          className={`cifras min-h-14 w-full rounded-xl border-2 px-1 text-base font-bold transition ${
+                          className={`cifras min-h-14 w-full rounded-xl border-2 px-1 text-base font-bold ${
                             h === horaElegida
                               ? "border-primario bg-primario text-sobre-primario"
                               : "hover:border-primario border-linea text-tinta bg-white"
