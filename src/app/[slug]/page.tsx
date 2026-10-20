@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BarraReservar } from "@/components/negocio/BarraReservar";
-import { Contacto } from "@/components/negocio/Contacto";
-import { Horario } from "@/components/negocio/Horario";
+import { DisponibilidadProvider } from "@/components/negocio/DisponibilidadProvider";
 import { Portada } from "@/components/negocio/Portada";
 import { Profesionales } from "@/components/negocio/Profesionales";
+import { Resenas } from "@/components/negocio/Resenas";
 import { Servicios } from "@/components/negocio/Servicios";
-import { Ubicacion } from "@/components/negocio/Ubicacion";
+import { TarjetaTurno } from "@/components/negocio/TarjetaTurno";
+import { Visita } from "@/components/negocio/Visita";
 import { obtenerTenant } from "@/lib/tenants/obtener";
 
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
@@ -36,19 +37,40 @@ export default async function PaginaNegocio({ params }: PageProps<"/[slug]">) {
   if (!tenant) notFound();
 
   return (
-    <>
+    <DisponibilidadProvider slug={tenant.slug}>
       <Portada tenant={tenant} />
-      <main className="mx-auto w-full max-w-3xl flex-1 pb-24 md:pb-8">
-        <Servicios tenant={tenant} />
-        <Profesionales tenant={tenant} />
-        <Horario tenant={tenant} />
-        <Ubicacion tenant={tenant} />
-        <Contacto tenant={tenant} />
-      </main>
-      <footer className="border-t border-neutral-200 px-4 py-6 pb-24 text-center text-sm text-neutral-600 md:pb-6">
+
+      <div className="bg-papel text-tinta flex-1">
+        {/*
+          Dos columnas en escritorio: el contenido a la izquierda y la tarjeta de turno a la derecha,
+          fija al desplazar. La tarjeta va primero en el código (y en el celular) y se monta sobre el
+          borde inferior de la portada con un margen negativo.
+        */}
+        <div className="mx-auto max-w-6xl px-4 pb-24 md:pb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-14">
+          <aside
+            aria-label="Próximo turno"
+            className="relative z-10 -mt-24 md:-mt-32 lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1 lg:-mt-[16rem] lg:self-start"
+          >
+            <TarjetaTurno
+              slug={tenant.slug}
+              servicios={tenant.servicios}
+              profesionales={tenant.profesionales.map((p) => ({ id: p.id, nombre: p.nombre }))}
+            />
+          </aside>
+
+          <main className="min-w-0 lg:col-start-1 lg:row-start-1">
+            <Servicios tenant={tenant} />
+            <Profesionales tenant={tenant} />
+            <Resenas tenant={tenant} />
+            <Visita tenant={tenant} />
+          </main>
+        </div>
+      </div>
+
+      <footer className="bg-papel-2 text-tinta-suave px-4 py-8 pb-28 text-center text-sm md:pb-8">
         © {tenant.nombre}
       </footer>
-      <BarraReservar tenant={tenant} />
-    </>
+      <BarraReservar slug={tenant.slug} textoReserva={tenant.textos.reserva} />
+    </DisponibilidadProvider>
   );
 }

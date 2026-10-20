@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 /*
- * Marca del negocio: el layout de /[slug] sobreescribe estas variables con los colores de su JSON.
- * "sobre-*" es el color de texto con mejor contraste sobre cada fondo.
+ * Marca del negocio: el layout de /[slug] sobreescribe estas variables con los colores de su JSON y la
+ * paleta derivada (src/lib/paleta.ts). "sobre-*" es el color de texto con mejor contraste sobre cada
+ * fondo. Los valores de aquí abajo son solo los de respaldo para pantallas fuera de un negocio (404...).
  */
 :root {
   --background: #ffffff;
@@ -11,6 +12,13 @@
   --acento: #c8a24a;
   --sobre-primario: #ffffff;
   --sobre-acento: #111111;
+  --papel: #f6f7f9;
+  --papel-2: #eceef2;
+  --linea: #dcdfe5;
+  --borde-control: #8a94a6;
+  --tinta: #121a26;
+  --tinta-suave: #4c5565;
+  --primario-texto: #1f2937;
 }
 
 @theme inline {
@@ -20,13 +28,107 @@
   --color-acento: var(--acento);
   --color-sobre-primario: var(--sobre-primario);
   --color-sobre-acento: var(--sobre-acento);
+  --color-papel: var(--papel);
+  --color-papel-2: var(--papel-2);
+  --color-linea: var(--linea);
+  --color-borde-control: var(--borde-control);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-primario-texto: var(--primario-texto);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-schibsted), var(--font-geist-sans), system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* --- Tipografía: títulos con voz propia (Schibsted Grotesk); el resto, Geist --- */
+.titulo-hero,
+.titulo-seccion,
+.numero-grande {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+/* Máximo 4,75 rem (la guía pide no pasar de 6) y tracking por encima del piso de -0,04 em */
+.titulo-hero {
+  font-weight: 800;
+  font-size: clamp(2.5rem, 1.7rem + 3.6vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+
+.titulo-seccion {
+  font-weight: 700;
+  font-size: clamp(1.625rem, 1.3rem + 1.3vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* Horas y precios: cifras del mismo ancho para que no "bailen" al cambiar */
+.numero-grande {
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cifras {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Superficies del navegador que también llevan la marca --- */
+::selection {
+  background: color-mix(in srgb, var(--acento) 55%, white);
+  color: #111111;
+}
+
+input,
+select,
+textarea {
+  accent-color: var(--primario);
+  caret-color: var(--primario-texto);
+}
+
+/* --- La tarjeta de cita: un talón con perforación --- */
+/*
+ * Las muescas son huecos reales (máscara), así que por ellas se ve lo que haya detrás (la foto de
+ * portada). La sombra va en un envoltorio con `filter`, porque una sombra normal quedaría recortada por
+ * la máscara. El talón mide 5,5 rem: ahí vive el botón.
+ */
+.tarjeta-turno {
+  --corte: calc(100% - 5.5rem);
+  --muesca: 0.8rem;
+  position: relative;
+  background: var(--papel);
+  color: var(--tinta);
+  border-radius: 1rem;
+  -webkit-mask:
+    radial-gradient(circle var(--muesca) at 0 var(--corte), #0000 98%, #000) left / 51% 100%
+      no-repeat,
+    radial-gradient(circle var(--muesca) at 100% var(--corte), #0000 98%, #000) right / 51% 100%
+      no-repeat;
+  mask:
+    radial-gradient(circle var(--muesca) at 0 var(--corte), #0000 98%, #000) left / 51% 100%
+      no-repeat,
+    radial-gradient(circle var(--muesca) at 100% var(--corte), #0000 98%, #000) right / 51% 100%
+      no-repeat;
+}
+
+.tarjeta-turno::after {
+  content: "";
+  position: absolute;
+  inset-inline: 1.25rem;
+  top: var(--corte);
+  border-top: 2px dashed var(--linea);
+  pointer-events: none;
+}
+
+.sombra-tarjeta {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.1)) drop-shadow(0 18px 30px rgb(0 0 0 / 0.22));
 }
 
 /* Foco visible en cualquier fondo: el contorno toma el color del texto del elemento. */
@@ -44,5 +146,6 @@ body {
   * {
     transition: none !important;
     scroll-behavior: auto !important;
+    animation: none !important;
   }
 }

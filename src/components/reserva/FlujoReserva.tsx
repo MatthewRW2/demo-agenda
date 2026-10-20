@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { obtenerHorariosAccion, reservarAccion } from "@/app/[slug]/reservar/acciones";
 import { enlaceWhatsApp } from "@/lib/enlaces";
+import type { Preseleccion } from "@/lib/preseleccion";
 import { erroresPorCampo, reservaSchema } from "@/lib/validacion";
 import { PasoDatos } from "./PasoDatos";
 import { PasoFechaHora } from "./PasoFechaHora";
@@ -22,16 +23,28 @@ interface Props {
   tenant: TenantPublico;
   /** Fechas reservables (YYYY-MM-DD) en que el local abre. */
   dias: string[];
+  /** Elecciones que ya trae el enlace (ya validadas en el servidor). */
+  inicial?: Preseleccion;
 }
 
-export function FlujoReserva({ tenant, dias }: Props) {
+function pasoInicial(p: Preseleccion): Paso {
+  if (p.servicioId && p.profesionalId) return "fechaHora";
+  if (p.servicioId) return "profesional";
+  return "servicio";
+}
+
+export function FlujoReserva({ tenant, dias, inicial = {} }: Props) {
   const router = useRouter();
-  const [paso, setPaso] = useState<Paso>("servicio");
-  const [servicioId, setServicioId] = useState<string | null>(null);
-  const [profesionalId, setProfesionalId] = useState<string | null>(null);
-  const [fecha, setFecha] = useState<string | null>(null);
+  const [paso, setPaso] = useState<Paso>(() => pasoInicial(inicial));
+  const [servicioId, setServicioId] = useState<string | null>(inicial.servicioId ?? null);
+  const [profesionalId, setProfesionalId] = useState<string | null>(inicial.profesionalId ?? null);
+  const [fecha, setFecha] = useState<string | null>(inicial.fecha ?? null);
   const [hora, setHora] = useState<string | null>(null);
-  const [horarios, setHorarios] = useState<EstadoHorarios>({ estado: "inicial" });
+  // El enlace "Reservar con X" fija al profesional: solo se escoge el servicio, entre los suyos.
+  const [profesionalFijo] = useState(() => !inicial.servicioId && !!inicial.profesionalId);
+  const [horarios, setHorarios] = useState<EstadoHorarios>(
+    inicial.fecha ? { estado: "cargando" } : { estado: "inicial" },
+  );
   const [datos, setDatos] = useState<DatosFormulario>({ nombre: "", celular: "", correo: "" });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
@@ -61,7 +74,12 @@ export function FlujoReserva({ tenant, dias }: Props) {
     datos: "Tus datos",
   };
 
-  async function cargarHorarios(f: string, servicio: string, profesional: string) {
+  async function cargarHorarios(
+    f: string,
+    servicio: string,
+    profesional: string,
+    horaDeseada?: string,
+  ) {
     const esta = ++peticion.current;
     setHorarios({ estado: "cargando" });
     const r = await obtenerHorariosAccion(tenant.slug, {
@@ -70,20 +88,39 @@ export function FlujoReserva({ tenant, dias }: Props) {
       fecha: f,
     });
     if (esta !== peticion.current) return; // llegó tarde: el cliente ya cambió de día
-    setHorarios(
-      r.ok
-        ? { estado: "listo", horas: r.horarios.map((h) => h.hora) }
-        : { estado: "error", mensaje: r.mensaje },
-    );
+    if (!r.ok) {
+      setHorarios({ estado: "error", mensaje: r.mensaje });
+      return;
+    }
+    const horas = r.horarios.map((h) => h.hora);
+    setHorarios({ estado: "listo", horas });
+    // Si el enlace traía una hora y sigue libre, va directo a los datos; si ya no, elige otra.
+    if (horaDeseada && horas.includes(horaDeseada)) {
+      setHora(horaDeseada);
+      setPaso("datos");
+    }
   }
+
+  // Un enlace con día elegido trae sus horas al abrir. Solo al montar: después manda el cliente.
+  useEffect(() => {
+    if (inicial.servicioId && inicial.profesionalId && inicial.fecha) {
+      void cargarHorarios(inicial.fecha, inicial.servicioId, inicial.profesionalId, inicial.hora);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function elegirServicio(id: string) {
     setServicioId(id);
-    setProfesionalId(null);
     setFecha(null);
     setHora(null);
     setHorarios({ estado: "inicial" });
-    setPaso("profesional");
+    // Si el cliente ya escogió con quién ("Reservar con X"), se salta ese paso.
+    if (profesionalFijo) {
+      setPaso("fechaHora");
+    } else {
+      setProfesionalId(null);
+      setPaso("profesional");
+    }
   }
 
   function elegirProfesional(id: string) {
@@ -109,7 +146,8 @@ export function FlujoReserva({ tenant, dias }: Props) {
   }
 
   function atras() {
-    const anterior = PASOS[PASOS.indexOf(paso) - 1];
+    let anterior = PASOS[PASOS.indexOf(paso) - 1];
+    if (profesionalFijo && anterior === "profesional") anterior = "servicio";
     if (anterior) setPaso(anterior);
   }
 
@@ -239,7 +277,21 @@ export function FlujoReserva({ tenant, dias }: Props) {
         </p>
       )}
 
-      {paso === "servicio" && <PasoServicio tenant={tenant} onElegir={elegirServicio} />}
+      {paso === "servicio" && (
+        <PasoServicio
+          tenant={{
+            ...tenant,
+            servicios: profesionalFijo
+              ? tenant.servicios.filter((s) =>
+                  tenant.profesionales
+                    .find((p) => p.id === profesionalId)
+                    ?.servicios.includes(s.id),
+                )
+              : tenant.servicios,
+          }}
+          onElegir={elegirServicio}
+        />
+      )}
 
       {paso === "profesional" && servicioId && (
         <PasoProfesional tenant={tenant} servicioId={servicioId} onElegir={elegirProfesional} />

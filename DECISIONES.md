@@ -372,3 +372,33 @@ Registro de decisiones donde las instrucciones eran ambiguas o hubo que elegir.
   cliente que pague debe ir en su propio despliegue. Está en la guía y en `docs/despliegue.md`.
 - **El cron diario también siembra el consultorio** (recorre todos los negocios demo); la prueba del cron ahora
   acepta varios negocios.
+
+## Rediseño — página pública
+
+Rama `rediseno`. No toca la lógica de reservas ni la base de datos.
+
+- **Dirección "Tarjeta de cita"**: la página gira en torno a un tiquete con talón (próximo turno libre + botón).
+  Muescas reales con `mask`, perforación punteada y sombra con `filter: drop-shadow` en un envoltorio. Los
+  servicios son un talonario (líneas punteadas). De la otra dirección solo se tomó el indicador discreto por
+  profesional "● Turnos hoy" / "Sin turnos hoy" (gris), sin anillos tipo historia.
+- **Cualquier par de colores**: `src/lib/paleta.ts` deriva papel, líneas, tinta y color de texto de marca a partir
+  del primario y el acento (mezcla OKLab + oscurecido con contraste garantizado). Por eso se quitó el aviso de
+  "primario claro" de `validar-tenants`: ya no hay colores que se lean mal.
+- **Página estática y rápida, datos vivos después**: "Abierto ahora" se calcula en el navegador con hora de Bogotá,
+  y el próximo turno y "Turnos hoy" salen de `/api/disponibilidad/[slug]` (mismo motor `calcularHorarios`,
+  caché `s-maxage=30`). Hay huecos de tamaño fijo para no mover el diseño (CLS 0,016). La reserva sigue
+  revalidando todo en el servidor.
+- **Enlaces con elección hecha**: "Reservar este", "Reservar con X" y los horarios de la tarjeta llevan
+  `?servicio=&profesional=&fecha=&hora=`. Es solo comodidad de la interfaz: se valida contra el negocio y los días
+  reservables, un parámetro inválido se ignora, y una hora que ya no está libre deja elegir otra.
+- **Campos nuevos, todos opcionales**: `imagenPortada`, `foto` (ya existía) y `resenas`. Sin ellos hay respaldo
+  (campo liso del color primario; iniciales; sin sección). Crear una demo sigue siendo copiar el JSON y cambiar
+  colores, logo y servicios.
+- **Reseñas de ejemplo**: solo con `"demo": true` y sin reseñas propias; llevan el rótulo "Reseñas de ejemplo" y
+  dicen que son inventadas. No se usa la API de Google (pide clave y facturación).
+- **Fotos**: Pexels (uso comercial libre), recortadas y comprimidas con sharp; créditos y modificaciones en
+  `docs/creditos-imagenes.md`. Servidas con `next/image` (AVIF/WebP, `sizes`, la portada con `priority`). El
+  consultorio usa fotos distintas a la barbería. Las personas retratadas son reales, presentadas como equipo
+  ficticio de una demo: no usar en material que las identifique con un negocio real.
+- **Medido** (Lighthouse móvil, build de producción local): rendimiento 93 y 94, accesibilidad 100.
+- No se usó el binario de `impeccable`: se siguieron sus guías escritas.

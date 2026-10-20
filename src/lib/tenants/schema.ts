@@ -35,6 +35,15 @@ const profesionalSchema = z.object({
   servicios: z.array(slugSchema).min(1, "debe atender al menos un servicio"),
 });
 
+/** Una reseña real, copiada por quien arma la demo (no se consulta ninguna API). */
+const resenaSchema = z.object({
+  autor: textoSchema.max(60, "máximo 60 caracteres"),
+  texto: textoSchema.max(400, "máximo 400 caracteres"),
+  estrellas: z.number().int().min(1).max(5).default(5),
+  /** De dónde viene ("Google", "Instagram"...); se muestra bajo la reseña. */
+  fuente: textoSchema.max(40, "máximo 40 caracteres").optional(),
+});
+
 const horarioSchema = z.object({
   lun: rangoSchema.nullable(),
   mar: rangoSchema.nullable(),
@@ -57,6 +66,11 @@ export const tenantSchema = z
     nombre: textoSchema,
     eslogan: textoSchema,
     logo: z.string().startsWith("/", "debe empezar con / (ruta dentro de public/)"),
+    /** Foto de portada (opcional). Sin ella se usa un fondo generado con los colores del negocio. */
+    imagenPortada: z
+      .string()
+      .startsWith("/", "debe empezar con / (ruta dentro de public/)")
+      .optional(),
     colores: z.object({
       primario: z.string().regex(COLOR, "debe ser un color hexadecimal #RRGGBB"),
       acento: z.string().regex(COLOR, "debe ser un color hexadecimal #RRGGBB"),
@@ -81,6 +95,11 @@ export const tenantSchema = z
         reserva: textoSchema.default("cita"),
       })
       .default({ profesional: "profesional", reserva: "cita" }),
+    /**
+     * Reseñas reales (opcional). Los negocios con `"demo": true` y sin este campo muestran unas "de
+     * ejemplo" claramente rotuladas; los reales sin él no muestran la sección.
+     */
+    resenas: z.array(resenaSchema).max(6, "máximo 6 reseñas").optional(),
     demo: z.boolean().default(false),
   })
   .superRefine((tenant, ctx) => {

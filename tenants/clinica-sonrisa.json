@@ -3,6 +3,7 @@
   "nombre": "Clínica Dental Sonrisa",
   "eslogan": "Cuidamos tu sonrisa con calidez y tecnología en Usaquén",
   "logo": "/tenants/clinica-sonrisa/logo.svg",
+  "imagenPortada": "/tenants/clinica-sonrisa/portada.jpg",
   "colores": { "primario": "#0F4C5C", "acento": "#F4B860" },
   "whatsapp": "573102345678",
   "direccion": "Cra. 7 #116-50, Usaquén, Bogotá",
@@ -29,16 +30,19 @@
   "profesionales": [
     {
       "id": "dra-mejia",
+      "foto": "/tenants/clinica-sonrisa/dra-mejia.jpg",
       "nombre": "Dra. Laura Mejía",
       "servicios": ["valoracion", "limpieza", "blanqueamiento"]
     },
     {
       "id": "dr-pardo",
+      "foto": "/tenants/clinica-sonrisa/dr-pardo.jpg",
       "nombre": "Dr. Andrés Pardo",
       "servicios": ["valoracion", "resina", "ortodoncia"]
     },
     {
       "id": "dra-ruiz",
+      "foto": "/tenants/clinica-sonrisa/dra-ruiz.jpg",
       "nombre": "Dra. Camila Ruiz",
       "servicios": ["valoracion", "limpieza", "resina"]
     }

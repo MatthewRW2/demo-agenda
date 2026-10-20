@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz";
-import { diaDeSemana, ZONA_HORARIA } from "@/lib/disponibilidad";
+import { diaDeSemana, sumarDias, ZONA_HORARIA } from "@/lib/disponibilidad";
 import { NOMBRE_DIA, formatearHora } from "@/lib/texto";
 
 const MESES = [
@@ -52,4 +52,12 @@ export function aFechaHoraBogota(instante: Date): { fecha: string; hora: string 
 export function formatearFechaHora(instante: Date): string {
   const { fecha, hora } = aFechaHoraBogota(instante);
   return `${formatearFechaLarga(fecha)}, ${formatearHora(hora)}`;
+}
+
+/** "Hoy", "Mañana" o "Lunes 11 de marzo", según la fecha respecto a hoy (ambas YYYY-MM-DD de Bogotá). */
+export function etiquetaDia(fecha: string, hoy: string): string {
+  if (fecha === hoy) return "Hoy";
+  if (fecha === sumarDias(hoy, 1)) return "Mañana";
+  const larga = formatearFechaLarga(fecha);
+  return larga.charAt(0).toLocaleUpperCase("es-CO") + larga.slice(1);
 }

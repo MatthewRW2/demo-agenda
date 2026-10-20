@@ -55,3 +55,24 @@ export function enlaceGoogleCalendar({ titulo, inicio, fin, detalles, lugar }: D
   if (lugar) params.set("location", lugar);
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
+
+export interface ParametrosReserva {
+  servicio?: string;
+  profesional?: string;
+  fecha?: string;
+  hora?: string;
+}
+
+/**
+ * Enlace al flujo de reserva con parte de la elección ya hecha (por ejemplo "Reservar este" ya trae el
+ * servicio). El flujo valida cada parámetro; uno inválido o vencido se ignora.
+ */
+export function enlaceReservar(slug: string, params: ParametrosReserva = {}): string {
+  const consulta = new URLSearchParams();
+  for (const clave of ["servicio", "profesional", "fecha", "hora"] as const) {
+    const valor = params[clave];
+    if (valor) consulta.set(clave, valor);
+  }
+  const texto = consulta.toString();
+  return `/${slug}/reservar${texto ? `?${texto}` : ""}`;
+}

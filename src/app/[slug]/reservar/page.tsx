@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FlujoReserva } from "@/components/reserva/FlujoReserva";
 import { diasDisponibles } from "@/lib/disponibilidad";
+import { preseleccionDesdeConsulta } from "@/lib/preseleccion";
 import { obtenerTenant } from "@/lib/tenants/obtener";
 
 // Los días reservables dependen de la fecha de hoy: se calculan en cada visita.
@@ -19,17 +20,22 @@ export async function generateMetadata({
   };
 }
 
-export default async function PaginaReservar({ params }: PageProps<"/[slug]/reservar">) {
+export default async function PaginaReservar({
+  params,
+  searchParams,
+}: PageProps<"/[slug]/reservar">) {
   const { slug } = await params;
   const tenant = obtenerTenant(slug);
   if (!tenant) notFound();
 
   const { nombre, textos, servicios, profesionales, whatsapp } = tenant;
+  const dias = diasDisponibles(tenant, new Date());
   return (
     <main className="flex-1">
       <FlujoReserva
         tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales, whatsapp }}
-        dias={diasDisponibles(tenant, new Date())}
+        dias={dias}
+        inicial={preseleccionDesdeConsulta(tenant, dias, await searchParams)}
       />
     </main>
   );

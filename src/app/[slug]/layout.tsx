@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { FranjaDemo } from "@/components/negocio/FranjaDemo";
-import { colorTextoSobre } from "@/lib/color";
+import { variablesDeMarca } from "@/lib/paleta";
 import { listarSlugs } from "@/lib/tenants/cargar";
 import { obtenerTenant } from "@/lib/tenants/obtener";
 
@@ -14,13 +14,8 @@ export default async function NegocioLayout({ children, params }: LayoutProps<"/
   const tenant = obtenerTenant(slug);
   if (!tenant) notFound();
 
-  const { primario, acento } = tenant.colores;
-  const marca = {
-    "--primario": primario,
-    "--acento": acento,
-    "--sobre-primario": colorTextoSobre(primario),
-    "--sobre-acento": colorTextoSobre(acento),
-  } as CSSProperties;
+  // Colores del JSON + paleta derivada (papel, tinta, líneas...) con el contraste ya garantizado
+  const marca = variablesDeMarca(tenant.colores) as CSSProperties;
 
   return (
     <div style={marca} className="flex flex-1 flex-col">
