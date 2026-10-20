@@ -1,7 +1,8 @@
 # Demo de agendamiento
 
 Sistema de reservas en línea para barberías, consultorios y spas. Es una demo de ventas: cada
-negocio es un archivo JSON en `tenants/`, sin tocar código.
+negocio es un archivo JSON en `tenants/`, sin tocar código. El diseño ("tarjeta de cita": un tiquete con
+talón) toma sus colores, textos y fotos del JSON y se ve bien con cualquier par de colores.
 
 ## Requisitos
 
@@ -60,7 +61,15 @@ npm run nuevo-negocio -- mi-negocio "Mi Negocio"
 npm run validar-tenants
 ```
 
-Las imágenes de cada negocio viven en `public/tenants/<slug>/`.
+Las imágenes de cada negocio viven en `public/tenants/<slug>/`. Campos opcionales (todos con respaldo si
+faltan, así que crear una demo sigue siendo copiar el JSON y cambiar colores, logo y servicios):
+
+- `imagenPortada`: foto horizontal de la portada (sin ella, un campo liso del color primario);
+- `foto` de cada profesional: retrato vertical (sin ella, sus iniciales);
+- `resenas`: reseñas reales (hasta 6). Sin reseñas, solo las demo (`"demo": true`) muestran tres de ejemplo,
+  rotuladas "Reseñas de ejemplo"; un negocio real sin reseñas no muestra la sección.
+
+Las fotos de las demos son de Pexels; créditos y licencia en [docs/creditos-imagenes.md](docs/creditos-imagenes.md).
 
 ## Base de datos
 
@@ -72,13 +81,23 @@ Las dobles reservas se evitan **en la base de datos**: la restricción `bookings
 (`EXCLUDE USING gist`, extensión `btree_gist`) rechaza dos reservas activas solapadas del mismo
 profesional. `npm test` la verifica contra un Postgres embebido, sin necesidad de Neon.
 
+## Página pública
+
+`/<slug>` es estática y rápida: portada con foto, la tarjeta del próximo turno libre, servicios, equipo,
+reseñas, horario y mapa. Lo que cambia con la hora se completa en el navegador: "Abierto ahora" (hora de
+Bogotá) y el próximo turno y "Turnos hoy" de cada profesional, que salen de `GET /api/disponibilidad/<slug>`
+(mismo motor que la reserva, con caché corta). Los botones "Reservar este", "Reservar con X" y cada horario de
+la tarjeta abren el flujo con la elección hecha (`?servicio=&profesional=&fecha=&hora=`); es solo comodidad de
+la interfaz, se valida y la reserva se vuelve a comprobar en el servidor.
+
 ## Reservas
 
-El cliente reserva en `/<slug>/reservar` (servicio, profesional, día y hora, datos) y recibe un
+El cliente reserva en `/<slug>/reservar` (servicio, profesional, día y hora —agrupadas en mañana, tarde y
+noche—, datos) con un resumen de su cita siempre a la vista, y recibe un
 enlace secreto `/<slug>/cita/<token>` con su código, "Agregar a Google Calendar" y "Confirmar por
 WhatsApp". Si escribe su correo y hay `RESEND_API_KEY`, también le llega por correo.
 
-Desde ese enlace el cliente puede **cancelar** o **cambiar el día u hora** de su cita, siempre que falte
+Desde ese enlace (la confirmación es un tiquete con código y estado) el cliente puede **cancelar** o **cambiar el día u hora** de su cita, siempre que falte
 al menos la anticipación mínima del negocio (`anticipacionMinHoras`); si falta menos, se le ofrece WhatsApp.
 
 ## Panel del negocio
