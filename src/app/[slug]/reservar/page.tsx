@@ -28,12 +28,12 @@ export default async function PaginaReservar({
   const tenant = obtenerTenant(slug);
   if (!tenant) notFound();
 
-  const { nombre, textos, servicios, profesionales, whatsapp } = tenant;
+  const { nombre, textos, servicios, profesionales, whatsapp, logo } = tenant;
   const dias = diasDisponibles(tenant, new Date());
   return (
-    <main className="flex-1">
+    <main className="flex flex-1 flex-col">
       <FlujoReserva
-        tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales, whatsapp }}
+        tenant={{ slug: tenant.slug, nombre, textos, servicios, profesionales, whatsapp, logo }}
         dias={dias}
         inicial={preseleccionDesdeConsulta(tenant, dias, await searchParams)}
       />

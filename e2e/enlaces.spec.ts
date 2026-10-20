@@ -39,3 +39,28 @@ test("una hora ya vencida en el enlace deja elegir otra, sin romper", async ({ p
   );
   await expect(page.getByRole("heading", { name: "¿Cuándo?" })).toBeVisible();
 });
+
+test("el resumen acompaña cada paso y los horarios vienen agrupados", async ({ page }) => {
+  await page.goto("/don-carlos/reservar?servicio=corte&profesional=carlos");
+  const resumen = page.getByRole("region", { name: "Resumen de tu cita" });
+  await expect(resumen).toContainText("Corte clásico");
+  await expect(resumen).toContainText("Carlos");
+
+  await expect(
+    page.getByRole("navigation", { name: "Progreso" }).getByRole("listitem"),
+  ).toHaveCount(4);
+  await expect(page.getByRole("listitem").filter({ hasText: "Día y hora" })).toHaveAttribute(
+    "aria-current",
+    "step",
+  );
+
+  await page.getByRole("list", { name: "Días disponibles" }).getByRole("button").last().click();
+  await expect(page.getByRole("heading", { name: "Mañana" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tarde" })).toBeVisible();
+
+  const primera = page.getByRole("button", { name: /[ap]\. m\./ }).first();
+  const hora = (await primera.textContent())!.trim();
+  await primera.click();
+  await expect(page.getByRole("heading", { name: "Tus datos" })).toBeVisible();
+  await expect(resumen).toContainText(hora);
+});

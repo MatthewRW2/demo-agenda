@@ -68,12 +68,11 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* Horas y precios: cifras del mismo ancho para que no "bailen" al cambiar */
+/* Horas y precios grandes: cifras proporcionales (las tabulares abren huecos en "$ 90.000" y "9:00") */
 .numero-grande {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
 }
 
 .cifras {
@@ -131,6 +130,35 @@ textarea {
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.1)) drop-shadow(0 18px 30px rgb(0 0 0 / 0.22));
 }
 
+/* --- Confirmación de la cita: la marca se dibuja una sola vez (único momento de movimiento) --- */
+@keyframes dibujar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+}
+
+.confirmacion-insignia {
+  animation: aparecer 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.confirmacion-trazo {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: dibujar 0.55s ease-out 0.25s forwards;
+}
+
+.confirmacion-trazo-check {
+  animation-delay: 0.6s;
+  animation-duration: 0.4s;
+}
+
 /* Foco visible en cualquier fondo: el contorno toma el color del texto del elemento. */
 :focus-visible {
   outline: 3px solid currentColor;
@@ -143,6 +171,10 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .confirmacion-trazo {
+    stroke-dashoffset: 0;
+  }
+
   * {
     transition: none !important;
     scroll-behavior: auto !important;
