@@ -7,7 +7,8 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "coverage/**"]),
+  // .claude/ contiene skills de terceros (no es código de la app)
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "coverage/**", ".claude/**"]),
 ]);
 
 export default eslintConfig;
